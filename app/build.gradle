@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace 'ru.netology.codelikeapro'
+    namespace 'ru.netology.nmedia'
     compileSdk 33
 
     defaultConfig {
