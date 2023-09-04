@@ -3,6 +3,7 @@ Thumbs.db*
 HELP.md
 .gradle
 build/
+local.properties
 
 ### STS ###
 .apt_generated
