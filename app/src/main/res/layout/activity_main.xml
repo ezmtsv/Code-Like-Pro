@@ -11,12 +11,12 @@
         android:id="@+id/avatar"
         android:layout_width="@dimen/posts_avatar_size"
         android:layout_height="@dimen/posts_avatar_size"
+        android:layout_marginBottom="@dimen/common_spacing"
         android:contentDescription="@string/description_post_author_avatar"
-        android:singleLine="true"
-        app:layout_constraintBaseline_toTopOf="parent"
+        android:src="@drawable/ic_netology_48dp"
         app:layout_constraintStart_toStartOf="parent"
-        tools:srcCompat="@sample/posts.json/data/authorAvatar"></ImageView>
-
+        app:layout_constraintTop_toTopOf="parent"
+        tools:srcCompat="@sample/posts.json/data/authorAvatar" />
     <TextView
         android:id="@+id/author"
         android:layout_width="0dp"
@@ -30,7 +30,7 @@
         app:layout_constraintStart_toEndOf="@id/avatar"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
-        tools:text="@sample/posts.json/data/author"></TextView>
+        tools:text="@sample/posts.json/data/author"/>
 
     <TextView
         android:id="@+id/published"
@@ -42,7 +42,7 @@
         app:layout_constraintEnd_toStartOf="@id/menu"
         app:layout_constraintStart_toEndOf="@id/avatar"
         app:layout_constraintTop_toBottomOf="@id/author"
-        tools:text="@sample/posts.json/data/published"></TextView>
+        tools:text="@sample/posts.json/data/published"/>
 
     <ImageButton
         android:id="@+id/menu"
@@ -81,13 +81,14 @@
         app:constraint_referenced_ids="avatar,published,menu, content" />
 
     <ImageView
-        android:id="@+id/icHeart"
+        android:id="@+id/icLike"
         android:layout_width="@dimen/favorite_size"
         android:layout_height="@dimen/favorite_size"
         android:layout_marginTop="@dimen/common_spacing"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/barrierContent"
-        tools:srcCompat="@drawable/ic_favorite_24" />
+        app:srcCompat="@drawable/ic_favorite_24"
+        android:contentDescription="@string/description_post_like" />
 
     <TextView
         android:id="@+id/countLike"
@@ -95,8 +96,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/count_spacing"
         android:layout_marginTop="@dimen/common_spacing"
-        app:layout_constraintBottom_toBottomOf="@id/icHeart"
-        app:layout_constraintStart_toEndOf="@id/icHeart"
+        app:layout_constraintBottom_toBottomOf="@id/icLike"
+        app:layout_constraintStart_toEndOf="@id/icLike"
         app:layout_constraintTop_toBottomOf="@id/barrierContent"
         tools:text="5" />
 
@@ -108,8 +109,9 @@
         android:layout_marginTop="@dimen/common_spacing"
         app:layout_constraintStart_toEndOf="@id/countLike"
         app:layout_constraintTop_toBottomOf="@id/barrierContent"
-        tools:srcCompat="@drawable/ic_share_24" />
-    />
+        app:srcCompat="@drawable/ic_share_24"
+        android:contentDescription="@string/description_post_share" />
+
 
     <TextView
         android:id="@+id/countRepost"
@@ -123,22 +125,22 @@
         tools:text="7" />
 
     <ImageView
-        android:id="@+id/icEye"
+        android:id="@+id/icView"
         android:layout_width="@dimen/favorite_size"
         android:layout_height="@dimen/favorite_size"
         android:layout_marginTop="@dimen/common_spacing"
         android:layout_marginEnd="@dimen/count_spacing"
         app:layout_constraintEnd_toStartOf="@id/countViews"
         app:layout_constraintTop_toBottomOf="@id/barrierContent"
-        tools:srcCompat="@drawable/ic_visibility_24" />
+        app:srcCompat="@drawable/ic_visibility_24"
+        android:contentDescription="@string/description_post_views" />
 
     <TextView
         android:id="@+id/countViews"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@id/icEye"
+        app:layout_constraintBottom_toBottomOf="@id/icView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/icEye"
+        app:layout_constraintTop_toTopOf="@id/icView"
         tools:text="9" />
-    />
 </androidx.constraintlayout.widget.ConstraintLayout>

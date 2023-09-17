@@ -2,5 +2,8 @@
     <string name="app_name">Code Like a Pro</string>
     <string name="nmedia">NMedia!</string>
     <string name="description_post_author_avatar">Post author avatar</string>
-    <string name="description_post_menu">Post menu</string>
+    <string name="description_post_like">Like</string>
+    <string name="description_post_share">Share</string>
+    <string name="description_post_menu">menu</string>
+    <string name="description_post_views">views</string>
 </resources>
