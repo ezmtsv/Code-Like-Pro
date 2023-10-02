@@ -4,6 +4,15 @@
     <string name="description_post_author_avatar">Post author avatar</string>
     <string name="description_post_like">Like</string>
     <string name="description_post_share">Share</string>
-    <string name="description_post_menu">menu</string>
-    <string name="description_post_views">views</string>
+    <string name="description_post_menu">Menu</string>
+    <string name="description_post_views">Views</string>
+    <string name="menu_remove">Remove</string>
+    <string name="post_text">Post text</string>
+    <string name="description_post_save">Post save</string>
+    <string name="error_emty_content">Empty Content</string>
+    <string name="edit_post">Edit Post</string>
+    <string name="description_ic_edit">Description edit</string>
+    <string name="description_ic_close">Description close</string>
+    <string name="netology_edit">Edit Message</string>
+    <string name="message">Message</string>
 </resources>
