@@ -62,11 +62,30 @@ class PostViewHolder(
                                 onIteractionListener.onEdit(post)
                                 true
                             }
+                            R.id.remove -> {
+                                onIteractionListener.onRemove(post)
+                                true
+                            }
+                            else -> false
+                        }
+                    }
+                }.show()
+            }
+            menu.setOnClickListener {
+                PopupMenu(it.context, it).apply {
+                    inflate(R.menu.options_post)
+                    setOnMenuItemClickListener { menuItem ->
+                        when (menuItem.itemId) {
+                            R.id.edit -> {
+                                onIteractionListener.onEdit(post)
+                                true
+                            }
 
                             R.id.remove -> {
                                 onIteractionListener.onRemove(post)
                                 true
                             }
+
                             else -> false
                         }
                     }
