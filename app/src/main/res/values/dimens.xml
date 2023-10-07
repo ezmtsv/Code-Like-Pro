@@ -6,4 +6,6 @@
     <dimen name="favorite_size">26dp</dimen>
     <dimen name="view_spacing">50dp</dimen>
     <dimen name="count_spacing">5dp</dimen>
+    <dimen name="icon_button_padding">12dp</dimen>
+    <dimen name="icon_button_min_size">48dp</dimen>
 </resources>

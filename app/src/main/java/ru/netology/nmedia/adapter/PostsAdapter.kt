@@ -40,13 +40,11 @@ class PostViewHolder(
             author.text = post.author
             published.text = post.published
             content.text = post.content
-            countLike.text = getCountClick(post.countLike)
-            countRepost.text = getCountClick(post.countRepost)
-            countViews.text = getCountClick(post.countViews)
-            icLike.setImageResource(
-                if (post.likeByMe) R.drawable.ic_favorite_red_24
-                else R.drawable.ic_favorite_24
-            )
+            icLike.isChecked = post.likeByMe
+            icLike.text = getCountClick(post.countLike)
+            icShare.text = getCountClick(post.countRepost)
+            //icView.text = getCountClick(post.countViews)
+            icView.text = getCountClick(4500)
             icLike.setOnClickListener {
                 onIteractionListener.onLike(post)
             }
