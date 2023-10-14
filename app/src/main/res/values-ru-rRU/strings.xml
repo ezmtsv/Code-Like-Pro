@@ -16,4 +16,11 @@
     <string name="description_ic_close">Иконка удаления</string>
     <string name="netology_edit">Редактирование</string>
     <string name="message">Текст</string>
+    <string name="error_empty_content">Контент не может быть пустым</string>
+    <string name="add_post">Добавить пост</string>
+    <string name="chooser_share_post">Выбор приложения</string>
+    <string name="KEY_NEW_POST">keyNewPost</string>
+    <string name="KEY_EDIT_POST">keyEditPost</string>
+    <string name="preview_video">Предпросмотр видео</string>
+    <string name="notApp">Подходящее приложение не установлено!</string>
 </resources>
