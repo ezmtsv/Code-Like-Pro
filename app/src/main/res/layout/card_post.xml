@@ -75,6 +75,34 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/barrier"
         tools:text="@sample/posts.json/data/content" />
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/group_video"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:visibility="visible"
+        app:constraint_referenced_ids="id_video, play">
+    </androidx.constraintlayout.widget.Group>
+    <ImageView
+        android:id="@+id/id_video"
+        android:layout_width="360dp"
+        android:layout_height="200dp"
+        app:layout_constraintTop_toBottomOf="@+id/content"
+        app:layout_constraintBottom_toTopOf="@id/barrierContent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:src="@drawable/backgroundvideo"
+        android:contentDescription="@string/preview_video" />
+    <ImageButton
+        android:id="@+id/play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/id_video"
+        app:layout_constraintEnd_toEndOf="@id/id_video"
+        app:layout_constraintTop_toTopOf="@id/id_video"
+        app:layout_constraintBottom_toBottomOf="@id/id_video"
+        android:src="@drawable/play_arrow_24"
+        />
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/barrierContent"
@@ -91,7 +119,7 @@
         android:layout_marginTop="@dimen/common_spacing"
         android:checkable="true"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/barrierContent"
+        app:layout_constraintTop_toBottomOf="@id/id_video"
         app:icon="@drawable/ic_like_selector"
         tools:text="@sample/posts.json/data/likes"
         android:contentDescription="@string/description_post_like" />
@@ -104,7 +132,7 @@
         android:layout_marginStart="@dimen/common_spacing"
         android:layout_marginTop="@dimen/common_spacing"
         app:layout_constraintStart_toEndOf="@id/icLike"
-        app:layout_constraintTop_toBottomOf="@id/barrierContent"
+        app:layout_constraintTop_toBottomOf="@id/id_video"
         app:icon="@drawable/ic_share_24"
         tools:text="@sample/posts.json/data/Reposts"
         android:contentDescription="@string/description_post_share" />
@@ -118,7 +146,7 @@
         android:layout_marginTop="@dimen/common_spacing"
         android:layout_marginEnd="@dimen/count_spacing"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/barrierContent"
+        app:layout_constraintTop_toBottomOf="@id/id_video"
         app:icon="@drawable/ic_visibility_24"
         tools:text="@sample/posts.json/data/Views"
         android:contentDescription="@string/description_post_views" />

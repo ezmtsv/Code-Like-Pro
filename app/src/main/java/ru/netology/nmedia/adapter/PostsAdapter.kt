@@ -1,6 +1,8 @@
 package ru.netology.nmedia.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.recyclerview.widget.DiffUtil
@@ -15,6 +17,7 @@ interface OnIteractionListener {
     fun onShare(post: Post)
     fun onEdit(post: Post)
     fun onRemove(post: Post)
+    fun openLinkVideo(post: Post)
 }
 
 class PostsAdapter(
@@ -29,13 +32,17 @@ class PostsAdapter(
         val post = getItem(position)
         holder.bind(post)
     }
+
 }
 
 class PostViewHolder(
     private val binding: CardPostBinding,
     private val onIteractionListener: OnIteractionListener
 ) : RecyclerView.ViewHolder(binding.root) {
+
+    @SuppressLint("SuspiciousIndentation")
     fun bind(post: Post) {
+
         binding.apply {
             author.text = post.author
             published.text = post.published
@@ -43,10 +50,23 @@ class PostViewHolder(
             icLike.isChecked = post.likeByMe
             icLike.text = getCountClick(post.countLike)
             icShare.text = getCountClick(post.countRepost)
-            //icView.text = getCountClick(post.countViews)
             icView.text = getCountClick(4500)
+//            fun viewContact(contactUri: Uri) {
+//                val intent = Intent(Intent.ACTION_VIEW, contactUri)
+//                if (intent.resolveActivity(packageManager) != null) {
+//                    startActivity(intent)
+//                }
+//            }
+            if (post.linkVideo != "") groupVideo.visibility = View.VISIBLE
+            else groupVideo.visibility = View.GONE
             icLike.setOnClickListener {
                 onIteractionListener.onLike(post)
+            }
+            idVideo.setOnClickListener {
+                onIteractionListener.openLinkVideo(post)
+            }
+            play.setOnClickListener {
+                onIteractionListener.openLinkVideo(post)
             }
             icShare.setOnClickListener {
                 onIteractionListener.onShare(post)
@@ -60,10 +80,12 @@ class PostViewHolder(
                                 onIteractionListener.onEdit(post)
                                 true
                             }
+
                             R.id.remove -> {
                                 onIteractionListener.onRemove(post)
                                 true
                             }
+
                             else -> false
                         }
                     }
@@ -115,6 +137,7 @@ class PostViewHolder(
         }
         return result
     }
+
 }
 
 

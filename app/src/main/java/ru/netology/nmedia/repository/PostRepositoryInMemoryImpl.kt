@@ -19,7 +19,8 @@ class PostRepositoryInMemoryImpl : PostRepository {
             author = "Нетология. Университет интернет-профессий будущего",
             content = "Делиться впечатлениями о любимых фильмах легко, а что если рассказать так, чтобы все заскучали \uD83D\uDE34\n",
             published = "22 сентября в 10:14",
-            likeByMe = false
+            likeByMe = false,
+            linkVideo = "https://www.youtube.com/watch?v=eollizcRpgQ&list=FLOM7B56hgs43QP3JEdHHWQg&index=4&ab_channel=TalentRecap"
         ),
         Post(
             id = nextId++,
@@ -40,14 +41,16 @@ class PostRepositoryInMemoryImpl : PostRepository {
             author = "Нетология. Университет интернет-профессий будущего",
             content = "Диджитал давно стал частью нашей жизни: мы общаемся в социальных сетях и мессенджерах, заказываем еду, такси и оплачиваем счета через приложения.",
             published = "20 сентября в 10:14",
-            likeByMe = false
+            likeByMe = false,
+            linkVideo = "https://www.youtube.com/watch?v=_xENDpb1Zr8&list=FLOM7B56hgs43QP3JEdHHWQg&index=25&ab_channel=MagnetigViolinist"
         ),
         Post(
             id = nextId++,
             author = "Нетология. Университет интернет-профессий будущего",
             content = "Большая афиша мероприятий осени: конференции, выставки и хакатоны для жителей Москвы, Ульяновска и Новосибирска \uD83D\uDE09",
             published = "19 сентября в 14:12",
-            likeByMe = false
+            likeByMe = false,
+            linkVideo = "https://www.youtube.com/watch?v=lzK1XStlWmA&list=FLOM7B56hgs43QP3JEdHHWQg&index=27&ab_channel=ValeryDolgin"
         ),
         Post(
             id = nextId++,

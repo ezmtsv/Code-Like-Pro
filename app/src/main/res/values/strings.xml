@@ -15,4 +15,11 @@
     <string name="description_ic_close">Description close</string>
     <string name="netology_edit">Edit Message</string>
     <string name="message">Message</string>
+    <string name="error_empty_content">Content not be empty</string>
+    <string name="add_post">Add post</string>
+    <string name="chooser_share_post">Select app</string>
+    <string name="KEY_NEW_POST">keyNewPost</string>
+    <string name="KEY_EDIT_POST">keyEditPost</string>
+    <string name="preview_video">preview Video</string>
+    <string name="notApp">Not App for use</string>
 </resources>
