@@ -55,7 +55,10 @@ class MainActivity : AppCompatActivity() {
 
             val editPostLauncher =
                 registerForActivityResult(NewPostResultContract(getString(R.string.KEY_EDIT_POST))) { result ->
-                    result ?: return@registerForActivityResult
+                    if (result == null) {
+                        viewModel.cancelEdit()
+                        return@registerForActivityResult
+                    }
                     viewModel.savePost(result.toString())
                 }
 
@@ -89,4 +92,5 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, getString(R.string.notApp), Toast.LENGTH_SHORT).show()
         }
     }
+
 }

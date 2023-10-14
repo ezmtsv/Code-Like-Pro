@@ -22,7 +22,6 @@ class EditPostActivity : AppCompatActivity() {
         binding.edit.setText(textPost)
         binding.edit.focusAndShowKeyboard()
         fun endEdit() {
-
             val intent = Intent()
             if (binding.edit.text.isNullOrBlank()) {
                 setResult(Activity.RESULT_CANCELED, intent)
