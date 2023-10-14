@@ -94,4 +94,5 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, getString(R.string.notApp), Toast.LENGTH_SHORT).show()
         }
     }
+
 }
