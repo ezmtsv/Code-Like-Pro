@@ -38,7 +38,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         edited.value = post
     }
 
-    /*    fun cancelEdit() {
-            edited.value = empty
-        }*/
+    fun cancelEdit() {
+        edited.value = empty
+    }
 }

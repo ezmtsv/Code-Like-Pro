@@ -13,7 +13,8 @@ import ru.netology.nmedia.databinding.ActivityMainBinding
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.viewmodel.PostViewModel
 
-
+const val KEY_NEW_POST = "keyNewPost"
+const val KEY_EDIT_POST = "keyEditPost"
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,8 +56,11 @@ class MainActivity : AppCompatActivity() {
             }
 
             val editPostLauncher =
-                registerForActivityResult(NewPostResultContract(getString(R.string.KEY_EDIT_POST))) { result ->
-                    result ?: return@registerForActivityResult
+                registerForActivityResult(NewPostResultContract(KEY_EDIT_POST)) { result ->
+                    if (result == null) {
+                        viewModel.cancelEdit()
+                        return@registerForActivityResult
+                    }
                     viewModel.savePost(result.toString())
                 }
 
@@ -70,7 +74,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         val newPostLauncher =
-            registerForActivityResult(NewPostResultContract(getString(R.string.KEY_NEW_POST))) { result ->
+            registerForActivityResult(NewPostResultContract(KEY_NEW_POST)) { result ->
                 result ?: return@registerForActivityResult
                 viewModel.savePost(result.toString())
             }
