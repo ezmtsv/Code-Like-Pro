@@ -51,12 +51,7 @@ class PostViewHolder(
             icLike.text = getCountClick(post.countLike)
             icShare.text = getCountClick(post.countRepost)
             icView.text = getCountClick(4500)
-//            fun viewContact(contactUri: Uri) {
-//                val intent = Intent(Intent.ACTION_VIEW, contactUri)
-//                if (intent.resolveActivity(packageManager) != null) {
-//                    startActivity(intent)
-//                }
-//            }
+
             if (post.linkVideo != "") groupVideo.visibility = View.VISIBLE
             else groupVideo.visibility = View.GONE
             icLike.setOnClickListener {

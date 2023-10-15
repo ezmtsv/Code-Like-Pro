@@ -10,13 +10,12 @@ import ru.netology.nmedia.databinding.ActivityEditPostBinding
 import ru.netology.nmedia.util.AndroidUtils.focusAndShowKeyboard
 
 class EditPostActivity : AppCompatActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding = ActivityEditPostBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        val textPost = intent?.getStringExtra(getString(R.string.KEY_EDIT_POST))
-
+        //val textPost = intent?.getStringExtra(getString(R.string.KEY_EDIT_POST))
+        val textPost = intent?.getStringExtra(KEY_EDIT_POST)
         Log.d("TAG", "edit Activity $textPost")
 
         binding.edit.setText(textPost)
@@ -40,6 +39,5 @@ class EditPostActivity : AppCompatActivity() {
         binding.icEdit.setOnClickListener {
             endEdit()
         }
-
     }
 }
