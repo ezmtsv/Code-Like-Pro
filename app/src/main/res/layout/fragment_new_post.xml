@@ -4,34 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.NewPostActivity">
+    tools:context=".activity.NewPostFragment">
 
-
-    <ImageView
-        android:id="@+id/ic_edit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/common_spacing"
-        android:background="@android:color/transparent"
-        android:contentDescription="@string/description_ic_edit"
-        android:src="@drawable/edit_24"/>
-    />
-
-    <TextView
-        android:id="@+id/message_edit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="100dp"
-        android:layout_marginTop="16dp"
-        android:textSize="18sp"
-        android:text="@string/netology_edit"
-        />
     <EditText
         android:id="@+id/edit"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="top"
-        android:layout_marginTop="60dp"
         tools:text="@tools:sample/lorem[35]"
         android:inputType="textMultiLine"
         android:background="@android:color/transparent"
