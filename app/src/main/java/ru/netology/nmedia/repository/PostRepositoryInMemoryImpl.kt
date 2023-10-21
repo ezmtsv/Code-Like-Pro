@@ -120,4 +120,9 @@ class PostRepositoryInMemoryImpl : PostRepository {
         data.value = posts
 
     }
+
+    override fun getPost(id: Int): Post =
+        posts.find {
+            it.id == id
+        }!!
 }

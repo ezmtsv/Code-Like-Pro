@@ -18,6 +18,7 @@ class PostRepositoryFilesImpl(private val context: Context) : PostRepository {
             field = value
             sync()
         }
+
     private val data = MutableLiveData(posts)
 
     init {
@@ -70,7 +71,13 @@ class PostRepositoryFilesImpl(private val context: Context) : PostRepository {
         data.value = posts
     }
 
-    fun sync() {
+    override fun getPost(id: Int): Post =
+        posts.find {
+            it.id == id
+        }!!
+
+
+    private fun sync() {
         context.openFileOutput(filename, Context.MODE_PRIVATE).bufferedWriter().use {
             it.write(gson.toJson(posts))
         }

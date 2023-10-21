@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.CardPostBinding
 import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.util.AndroidUtils
 
 interface OnIteractionListener {
     fun onLike(post: Post)
@@ -18,6 +19,8 @@ interface OnIteractionListener {
     fun onEdit(post: Post)
     fun onRemove(post: Post)
     fun openLinkVideo(post: Post)
+
+    fun openCardPost(post: Post)
 }
 
 class PostsAdapter(
@@ -48,9 +51,9 @@ class PostViewHolder(
             published.text = post.published
             content.text = post.content
             icLike.isChecked = post.likeByMe
-            icLike.text = getCountClick(post.countLike)
-            icShare.text = getCountClick(post.countRepost)
-            icView.text = getCountClick(4500)
+            icLike.text = AndroidUtils.getCountClick(post.countLike)
+            icShare.text = AndroidUtils.getCountClick(post.countRepost)
+            icView.text = AndroidUtils.getCountClick(4500)
 
             if (post.linkVideo != "") groupVideo.visibility = View.VISIBLE
             else groupVideo.visibility = View.GONE
@@ -106,31 +109,10 @@ class PostViewHolder(
                     }
                 }.show()
             }
-        }
-    }
-
-    private fun getCountClick(cnt: Int): String {
-        val tmp: Int
-        val result: String = when {
-            cnt < 1000 -> {
-                "+$cnt"
-            }
-
-            cnt < 10_000 -> {
-                tmp = (cnt.toFloat() / 100.0f).toInt()
-                "+${String.format("%.1f", tmp.toFloat() / 10.0)}K"
-            }
-
-            cnt < 1_000_000 -> {
-                "+${(cnt.toFloat() / 1000.0f).toInt()}K"
-            }
-
-            else -> {
-                tmp = (cnt.toFloat() / 100_000.0f).toInt()
-                "+${String.format("%.1f", tmp.toFloat() / 10.0)}M"
+            root.setOnClickListener {
+                onIteractionListener.openCardPost(post)
             }
         }
-        return result
     }
 
 }

@@ -9,13 +9,12 @@
     <string name="menu_remove">Remove</string>
     <string name="post_text">Post text</string>
     <string name="description_post_save">Post save</string>
-    <string name="error_emty_content">Empty Content</string>
     <string name="edit_post">Edit Post</string>
     <string name="description_ic_edit">Description edit</string>
     <string name="description_ic_close">Description close</string>
     <string name="netology_edit">Edit Message</string>
     <string name="message">Message</string>
-    <string name="error_empty_content">Content not be empty</string>
+    <string name="error_empty_content">Content not be empty!</string>
     <string name="add_post">Add post</string>
     <string name="chooser_share_post">Select app</string>
     <string name="preview_video">preview Video</string>
