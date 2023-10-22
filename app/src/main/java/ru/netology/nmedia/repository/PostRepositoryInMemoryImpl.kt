@@ -121,8 +121,4 @@ class PostRepositoryInMemoryImpl : PostRepository {
 
     }
 
-    override fun getPost(id: Int): Post =
-        posts.find {
-            it.id == id
-        }!!
 }

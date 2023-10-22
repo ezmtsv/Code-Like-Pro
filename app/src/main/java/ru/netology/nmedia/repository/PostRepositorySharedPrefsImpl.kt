@@ -69,11 +69,6 @@ class PostRepositorySharedPrefsImpl(context: Context) : PostRepository {
         sync()
     }
 
-    override fun getPost(id: Int): Post =
-        posts.find {
-            it.id == id
-        }!!
-
     private fun sync() {
         with(prefs.edit()) {
             putString(key, gson.toJson(posts))

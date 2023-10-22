@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import ru.netology.nmedia.R
+import ru.netology.nmedia.activity.FeedFragment.Companion.postEditArg
 import ru.netology.nmedia.databinding.FragmentEditPostBinding
 import ru.netology.nmedia.util.AndroidUtils.focusAndShowKeyboard
 import ru.netology.nmedia.viewmodel.PostViewModel
@@ -22,10 +23,11 @@ class EditPostFragment : Fragment() {
     ): View {
         val binding = FragmentEditPostBinding.inflate(layoutInflater)
 
-        val textPost = viewModel.edited.value?.content
+        val idPost = arguments?.postEditArg
+        val textPost = viewModel.data.value?.find { it.id == idPost }?.content
 
-        binding.edit.setText(textPost)
-        binding.edit.focusAndShowKeyboard()
+        println("content $textPost")
+
         fun endEdit() {
             val content = binding.edit.text.toString()
             if (content.isBlank()) {
@@ -35,10 +37,15 @@ class EditPostFragment : Fragment() {
                     Toast.LENGTH_LONG
                 ).show()
             } else {
-                if (textPost != content) viewModel.savePost(content)
+                if (textPost != content) {
+                    viewModel.savePost(content)
+                }
             }
             findNavController().navigateUp()
         }
+
+        binding.edit.setText(textPost)
+        binding.edit.focusAndShowKeyboard()
 
         binding.ok.setOnClickListener {
             endEdit()
@@ -47,6 +54,7 @@ class EditPostFragment : Fragment() {
         binding.icEdit.setOnClickListener {
             endEdit()
         }
+
         return binding.root
     }
 

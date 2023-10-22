@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.CardPostBinding
+import ru.netology.nmedia.databinding.SinglePostBinding
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.util.AndroidUtils
 
@@ -42,7 +43,6 @@ class PostViewHolder(
     private val binding: CardPostBinding,
     private val onIteractionListener: OnIteractionListener
 ) : RecyclerView.ViewHolder(binding.root) {
-
     @SuppressLint("SuspiciousIndentation")
     fun bind(post: Post) {
 
