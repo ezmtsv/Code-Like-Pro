@@ -9,16 +9,18 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        node-version: [10.x, 12.x, 14.x, 16.x, 18.x]
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Set up JDK 17
+      - name: Set up JDK 17 ${{ matrix.node-version }}
         uses: actions/setup-java@v1
         with:
-          java-version: 17
-
+          java-version: 17 
+          node-version: ${{ matrix.node-version }}
       - name: Build
         run: |
           chmod +x ./gradlew
