@@ -5,7 +5,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import ru.netology.nmedia.activity.MainActivity
 import ru.netology.nmedia.dto.Post
 
 class PostRepositorySharedPrefsImpl(context: Context) : PostRepository {
@@ -70,7 +69,7 @@ class PostRepositorySharedPrefsImpl(context: Context) : PostRepository {
         sync()
     }
 
-    fun sync() {
+    private fun sync() {
         with(prefs.edit()) {
             putString(key, gson.toJson(posts))
             apply()

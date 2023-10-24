@@ -10,13 +10,12 @@
     <string name="menu_remove">Удаление</string>
     <string name="post_text">Текст поста</string>
     <string name="description_post_save">Сохранение поста</string>
-    <string name="error_emty_content">Нет контента</string>
     <string name="edit_post">Редактировать</string>
     <string name="description_ic_edit">Иконка редактирования</string>
     <string name="description_ic_close">Иконка удаления</string>
     <string name="netology_edit">Редактирование</string>
     <string name="message">Текст</string>
-    <string name="error_empty_content">Контент не может быть пустым</string>
+    <string name="error_empty_content">Контент не может быть пустым!</string>
     <string name="add_post">Добавить пост</string>
     <string name="chooser_share_post">Выбор приложения</string>
     <string name="preview_video">Предпросмотр видео</string>
