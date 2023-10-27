@@ -6,7 +6,7 @@ import android.util.Log
 data class Post(
     val id: Int,
     val author: String,
-    val authorAvatar: String = "",
+    //val authorAvatar: String = "",
     val published: String,
     val content: String,
     val likeByMe: Boolean,
