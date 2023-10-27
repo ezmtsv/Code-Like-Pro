@@ -11,10 +11,10 @@ import ru.netology.nmedia.repository.PostRepositorySQLiteImpl
 
 private val empty = Post(
     id = 0,
-    author = "",
+    author = "Me",
     content = "",
     likeByMe = false,
-    published = ""
+    published = "now"
 )
 
 class PostViewModel(application: Application) : AndroidViewModel(application) {

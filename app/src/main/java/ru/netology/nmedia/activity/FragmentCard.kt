@@ -74,12 +74,7 @@ class FragmentCard : Fragment() {
                     }
 
                     override fun openCardPost(post: Post) {
-                        findNavController().navigate(
-                            R.id.action_feedFragment_to_fragmentCard,
-                            Bundle().apply {
-                                postEditArg = post.id
-                            }
-                        )
+
                     }
                 }).bind(post)
             }

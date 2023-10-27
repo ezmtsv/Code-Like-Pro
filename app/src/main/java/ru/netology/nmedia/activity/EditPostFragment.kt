@@ -26,7 +26,6 @@ class EditPostFragment : Fragment() {
         val idPost = arguments?.postEditArg
         val textPost = viewModel.data.value?.find { it.id == idPost }?.content
 
-        println("content $textPost")
 
         fun endEdit() {
             val content = binding.edit.text.toString()
