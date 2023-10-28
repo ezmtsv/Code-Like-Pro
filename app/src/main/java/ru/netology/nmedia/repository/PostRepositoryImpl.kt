@@ -14,8 +14,8 @@ class PostRepositoryImpl(
         }
     }
 
-    override fun updateContent(id: Int, content: String) {
-        dao.updateContentById(id, content)
+    override fun updateContent(id: Int, content: String, published: String) {
+        dao.updateContentById(id, content, published)
     }
 
     override fun like(id: Int) {
