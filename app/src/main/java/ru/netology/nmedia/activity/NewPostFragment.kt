@@ -16,6 +16,7 @@ class NewPostFragment : Fragment() {
     companion object {
         var Bundle.textArg: String? by StringArg
     }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -30,10 +31,14 @@ class NewPostFragment : Fragment() {
                 val content = binding.edit.text.toString()
                 viewModel.savePost(content)
             }
+            //findNavController().navigateUp()
+        }
+        viewModel.postCreated.observe(viewLifecycleOwner) {
+            viewModel.loadPosts()
             findNavController().navigateUp()
         }
 
-        arguments?.textArg?.let ( binding.edit::setText )
+        arguments?.textArg?.let(binding.edit::setText)
 
         return binding.root
     }

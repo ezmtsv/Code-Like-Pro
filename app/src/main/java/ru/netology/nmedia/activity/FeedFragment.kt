@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -20,7 +21,7 @@ import ru.netology.nmedia.viewmodel.PostViewModel
 
 class FeedFragment : Fragment() {
     companion object {
-        var Bundle.postEditArg: Int by PostEditArg
+        var Bundle.postEditArg: Long by PostEditArg
     }
 
     override fun onCreateView(
@@ -80,18 +81,28 @@ class FeedFragment : Fragment() {
 
         })
         binding.list.adapter = adapter
-        viewModel.data.observe(viewLifecycleOwner) { posts ->
-            val newPost = adapter.currentList.size < posts.size
-            adapter.submitList(posts) {
-                if (newPost) binding.list.smoothScrollToPosition(0)
-            }
+        viewModel.data.observe(viewLifecycleOwner) { state ->
+            adapter.submitList(state.posts)
+            binding.progress.isVisible = state.loading
+            binding.errorGroup.isVisible = state.error
+            binding.emptyText.isVisible = state.empty
         }
 
+        binding.retryButton.setOnClickListener {
+            viewModel.loadPosts()
+        }
 
         binding.fab.setOnClickListener {
             findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
         }
 
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            viewModel.loadPosts()
+            binding.swipeRefreshLayout.isRefreshing = false
+        }
+        binding.swipeRefreshLayout.setColorSchemeResources(
+            android.R.color.holo_blue_bright,
+        )
         return binding.root
     }
 }

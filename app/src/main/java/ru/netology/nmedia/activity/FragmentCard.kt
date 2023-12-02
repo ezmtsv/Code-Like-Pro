@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -29,11 +30,8 @@ class FragmentCard : Fragment() {
         val binding = CardPostBinding.inflate(layoutInflater, container, false)
         val idPost = arguments?.postEditArg
 
-        //val post = viewModel.data.value?.find { it.id == idPost }!!
-
-
         viewModel.data.observe(viewLifecycleOwner) { posts ->
-            val post = posts.find { it.id == idPost }
+            val post = posts.posts.find { it.id == idPost }
             post?.let {
                 PostViewHolder(binding, object : OnIteractionListener {
                     override fun onLike(post: Post) {
@@ -78,6 +76,10 @@ class FragmentCard : Fragment() {
                     }
                 }).bind(post)
             }
+        }
+
+        viewModel.data.observe(viewLifecycleOwner) { state ->
+            binding.progressCard.isVisible = state.loading
         }
         return binding.root
     }
