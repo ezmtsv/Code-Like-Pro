@@ -1,7 +1,5 @@
 package ru.netology.nmedia.activity
 
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -35,21 +33,21 @@ class FeedFragment : Fragment() {
         viewModel.cancelEdit()
         val adapter = PostsAdapter(object : OnIteractionListener {
             override fun onLike(post: Post) {
-                viewModel.like(post.id)
+                viewModel.like(post)
             }
 
-            override fun onShare(post: Post) {
-                val intent = Intent().apply {
-                    action = Intent.ACTION_SEND
-                    putExtra(Intent.EXTRA_TEXT, post.content)
-                    type = "text/plain"
-                }
-
-                val shareIntent =
-                    Intent.createChooser(intent, getString(R.string.chooser_share_post))
-                startActivity(shareIntent)
-                viewModel.share(post.id)
-            }
+//            override fun onShare(post: Post) {
+//                val intent = Intent().apply {
+//                    action = Intent.ACTION_SEND
+//                    putExtra(Intent.EXTRA_TEXT, post.content)
+//                    type = "text/plain"
+//                }
+//
+//                val shareIntent =
+//                    Intent.createChooser(intent, getString(R.string.chooser_share_post))
+//                startActivity(shareIntent)
+//                viewModel.share(post.id)
+//            }
 
             override fun onEdit(post: Post) {
                 viewModel.edit(post)
@@ -65,10 +63,10 @@ class FeedFragment : Fragment() {
                 viewModel.remove(post.id)
             }
 
-            override fun openLinkVideo(post: Post) {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(post.linkVideo))
-                startActivity(intent)
-            }
+//            override fun openLinkVideo(post: Post) {
+//                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(post.linkVideo))
+//                startActivity(intent)
+//            }
 
             override fun openCardPost(post: Post) {
                 findNavController().navigate(
@@ -102,6 +100,8 @@ class FeedFragment : Fragment() {
         }
         binding.swipeRefreshLayout.setColorSchemeResources(
             android.R.color.holo_blue_bright,
+            android.R.color.holo_green_light,
+            android.R.color.holo_red_light,
         )
         return binding.root
     }

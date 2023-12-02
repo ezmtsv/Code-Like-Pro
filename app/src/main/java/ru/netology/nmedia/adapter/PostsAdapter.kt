@@ -10,16 +10,15 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.CardPostBinding
-import ru.netology.nmedia.databinding.SinglePostBinding
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.util.AndroidUtils
 
 interface OnIteractionListener {
     fun onLike(post: Post)
-    fun onShare(post: Post)
+//    fun onShare(post: Post)
     fun onEdit(post: Post)
     fun onRemove(post: Post)
-    fun openLinkVideo(post: Post)
+//    fun openLinkVideo(post: Post)
 
     fun openCardPost(post: Post)
 }
@@ -43,32 +42,38 @@ class PostViewHolder(
     private val binding: CardPostBinding,
     private val onIteractionListener: OnIteractionListener
 ) : RecyclerView.ViewHolder(binding.root) {
-    @SuppressLint("SuspiciousIndentation")
+    @SuppressLint("SuspiciousIndentation", "SimpleDateFormat")
     fun bind(post: Post) {
 
         binding.apply {
             author.text = post.author
-            published.text = post.published
-            content.text = post.content
-            icLike.isChecked = post.likeByMe
-            icLike.text = AndroidUtils.getCountClick(post.countLike)
-            icShare.text = AndroidUtils.getCountClick(post.countRepost)
-            icView.text = AndroidUtils.getCountClick(4500)
 
-            if (post.linkVideo != "") groupVideo.visibility = View.VISIBLE
-            else groupVideo.visibility = View.GONE
+            val sdf = java.text.SimpleDateFormat("dd MMMM yyyy, HH:mm")
+            val date = java.util.Date(post.published * 1000)
+            published.text = sdf.format(date).toString()
+
+            content.text = post.content
+            icLike.isChecked = post.likedByMe
+            icLike.text = AndroidUtils.getCountClick(post.likes)
+//            icShare.text = AndroidUtils.getCountClick(post.countRepost)
+            icShare.text = AndroidUtils.getCountClick(1200)
+            icView.text = AndroidUtils.getCountClick(450)
+
+//            if (post.linkVideo != "") groupVideo.visibility = View.VISIBLE
+//            else groupVideo.visibility = View.GONE
+            groupVideo.visibility = View.GONE
             icLike.setOnClickListener {
                 onIteractionListener.onLike(post)
             }
-            idVideo.setOnClickListener {
-                onIteractionListener.openLinkVideo(post)
-            }
-            play.setOnClickListener {
-                onIteractionListener.openLinkVideo(post)
-            }
-            icShare.setOnClickListener {
-                onIteractionListener.onShare(post)
-            }
+//            idVideo.setOnClickListener {
+//                onIteractionListener.openLinkVideo(post)
+//            }
+//            play.setOnClickListener {
+//                onIteractionListener.openLinkVideo(post)
+//            }
+//            icShare.setOnClickListener {
+//                onIteractionListener.onShare(post)
+//            }
             menu.setOnClickListener {
                 PopupMenu(it.context, it).apply {
                     inflate(R.menu.options_post)

@@ -5,7 +5,6 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import ru.netology.nmedia.db.AppDb
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.model.FeedModel
 import ru.netology.nmedia.repository.PostRepository
@@ -20,10 +19,10 @@ private val empty = Post(
     id = 0,
     author = "Me",
     content = "",
-    likeByMe = false,
-    countRepost = 0,
-    countViews = 0,
-    published = "now"
+    likedByMe = false,
+//    countRepost = 0,
+//    countViews = 0,
+    published = 0
 )
 
 class PostViewModel(application: Application) : AndroidViewModel(application) {
@@ -61,13 +60,13 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
             if (post.id != 0L) {
                 if (text != post.content) {
                     thread {
-                        repository.updateContent(post.id, text, getTime())
+                        repository.updateContent(post.id, text)
                         _postCreated.postValue(Unit)
                     }
                 }
             } else {
                 thread {
-                    repository.save(post.copy(content = text, published = getTime()))
+                    repository.save(post.copy(content = text))
                     _postCreated.postValue(Unit)
                 }
             }
@@ -79,9 +78,9 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         edited.value = post
     }
 
-    fun like(id: Long) {
+    fun like(post: Post) {
         thread {
-            repository.like(id)
+            repository.like(post)
             loadPosts()
         }
     }
@@ -104,12 +103,12 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun share(id: Long) {
-        thread {
-            repository.share(id)
-            loadPosts()
-        }
-    }
+//    fun share(id: Long) {
+//        thread {
+//            repository.share(id)
+//            loadPosts()
+//        }
+//    }
 
     fun cancelEdit() {
         edited.value = empty

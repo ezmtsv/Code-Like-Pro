@@ -38,7 +38,7 @@ class PostRepositoryImpl(
 
     }
 
-    override fun updateContent(id: Long, content: String, published: String) {
+    override fun updateContent(id: Long, content: String) {
         //dao.updateContentById(id, content, published)
         val post = posts.find { post -> post.id == id }
         val request: Request = Request.Builder()
@@ -46,40 +46,29 @@ class PostRepositoryImpl(
             .url("${BASE_URL}/api/slow/posts")
             .build()
         val call = client.newCall(request)
-        val response = call.execute()
+        call.execute()
 //        val body = requireNotNull(response.body)
 //        val responseText = body.string()
 //        return gson.fromJson(responseText, Post::class.java)
     }
 
-    override fun like(id: Long): Post {
+    override fun like(post: Post): Post {
         //dao.likeById(id)
-        val urlLink = "${BASE_URL}/api/posts/$id/likes"
-        var request: Request? = null
-        var responseText = ""
-        posts.find {
-
-            if (it.id == id) {
-                request = if (!it.likeByMe) {
-                    Request.Builder()
-                        .post(gson.toJson("").toRequestBody(jsonType))
-                        .url(urlLink)
-                        .build()
-                } else {
-                    Request.Builder()
-                        .delete(gson.toJson("").toRequestBody(jsonType))
-                        .url(urlLink)
-                        .build()
-                }
-                true
-            } else {
-                false
-            }
-
+        val urlLink = "${BASE_URL}/api/posts/${post.id}/likes"
+        var responseText: String
+        val request = if (!post.likedByMe) {
+            Request.Builder()
+                .post(gson.toJson("").toRequestBody(jsonType))
+                .url(urlLink)
+                .build()
+        } else {
+            Request.Builder()
+                .delete(gson.toJson("").toRequestBody(jsonType))
+                .url(urlLink)
+                .build()
         }
-
-        request?.let {
-            val call = client.newCall(request!!)
+        request.let {
+            val call = client.newCall(request)
             call.execute().use { response ->
                 val body = requireNotNull(response.body)
                 responseText = body.string()
@@ -88,23 +77,23 @@ class PostRepositoryImpl(
         return gson.fromJson(responseText, Post::class.java)
     }
 
-    override fun share(id: Long): Post {
-        //dao.share(id)
-        val urlLink = "${BASE_URL}/api/posts/$id/share"
-        val request: Request = Request.Builder()
-            .post(gson.toJson("").toRequestBody(jsonType))
-            .url(urlLink)
-            .build()
-
-        val call = client.newCall(request)
-        var responseText: String
-        call.execute().use { response ->
-            val body = requireNotNull(response.body)
-            responseText = body.string()
-        }
-
-        return gson.fromJson(responseText, Post::class.java)
-    }
+//    override fun share(id: Long): Post {
+//        //dao.share(id)
+//        val urlLink = "${BASE_URL}/api/posts/$id/share"
+//        val request: Request = Request.Builder()
+//            .post(gson.toJson("").toRequestBody(jsonType))
+//            .url(urlLink)
+//            .build()
+//
+//        val call = client.newCall(request)
+//        var responseText: String
+//        call.execute().use { response ->
+//            val body = requireNotNull(response.body)
+//            responseText = body.string()
+//        }
+//
+//        return gson.fromJson(responseText, Post::class.java)
+//    }
 
     override fun save(post: Post): Post {
         //dao.save(PostEntity.fromDto(post))
