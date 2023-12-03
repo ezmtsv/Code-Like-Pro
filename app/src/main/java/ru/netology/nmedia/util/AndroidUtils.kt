@@ -85,12 +85,12 @@ object StringArg : ReadWriteProperty<Bundle, String?> {
         thisRef.getString(property.name)
 }
 
-object PostEditArg : ReadWriteProperty<Bundle, Int> {
-    override fun getValue(thisRef: Bundle, property: KProperty<*>): Int =
-        thisRef.getInt(property.name)
+object PostEditArg : ReadWriteProperty<Bundle, Long> {
+    override fun getValue(thisRef: Bundle, property: KProperty<*>): Long =
+        thisRef.getLong(property.name)
 
-    override fun setValue(thisRef: Bundle, property: KProperty<*>, value: Int) {
-        thisRef.putInt(property.name, value)
+    override fun setValue(thisRef: Bundle, property: KProperty<*>, value: Long) {
+        thisRef.putLong(property.name, value)
     }
 
 }

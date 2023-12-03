@@ -1,11 +1,10 @@
 package ru.netology.nmedia.activity
 
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -29,29 +28,26 @@ class FragmentCard : Fragment() {
         val binding = CardPostBinding.inflate(layoutInflater, container, false)
         val idPost = arguments?.postEditArg
 
-        //val post = viewModel.data.value?.find { it.id == idPost }!!
-
-
         viewModel.data.observe(viewLifecycleOwner) { posts ->
-            val post = posts.find { it.id == idPost }
+            val post = posts.posts.find { it.id == idPost }
             post?.let {
                 PostViewHolder(binding, object : OnIteractionListener {
                     override fun onLike(post: Post) {
-                        viewModel.like(post.id)
+                        viewModel.like(post)
                     }
 
-                    override fun onShare(post: Post) {
-                        val intent = Intent().apply {
-                            action = Intent.ACTION_SEND
-                            putExtra(Intent.EXTRA_TEXT, post.content)
-                            type = "text/plain"
-                        }
-
-                        val shareIntent =
-                            Intent.createChooser(intent, getString(R.string.chooser_share_post))
-                        startActivity(shareIntent)
-                        viewModel.share(post.id)
-                    }
+//                    override fun onShare(post: Post) {
+//                        val intent = Intent().apply {
+//                            action = Intent.ACTION_SEND
+//                            putExtra(Intent.EXTRA_TEXT, post.content)
+//                            type = "text/plain"
+//                        }
+//
+//                        val shareIntent =
+//                            Intent.createChooser(intent, getString(R.string.chooser_share_post))
+//                        startActivity(shareIntent)
+//                        viewModel.share(post.id)
+//                    }
 
                     override fun onEdit(post: Post) {
                         viewModel.edit(post)
@@ -68,16 +64,20 @@ class FragmentCard : Fragment() {
                         findNavController().navigateUp()
                     }
 
-                    override fun openLinkVideo(post: Post) {
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(post.linkVideo))
-                        startActivity(intent)
-                    }
+//                    override fun openLinkVideo(post: Post) {
+//                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(post.linkVideo))
+//                        startActivity(intent)
+//                    }
 
                     override fun openCardPost(post: Post) {
 
                     }
                 }).bind(post)
             }
+        }
+
+        viewModel.data.observe(viewLifecycleOwner) { state ->
+            binding.progressCard.isVisible = state.loading
         }
         return binding.root
     }

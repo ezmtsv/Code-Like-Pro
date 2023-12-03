@@ -24,8 +24,7 @@ class EditPostFragment : Fragment() {
         val binding = FragmentEditPostBinding.inflate(layoutInflater)
 
         val idPost = arguments?.postEditArg
-        val textPost = viewModel.data.value?.find { it.id == idPost }?.content
-
+        val textPost = viewModel.data.value?.posts?.find { it.id == idPost }?.content
 
         fun endEdit() {
             val content = binding.edit.text.toString()
@@ -38,9 +37,9 @@ class EditPostFragment : Fragment() {
             } else {
                 if (textPost != content) {
                     viewModel.savePost(content)
-                }
+                } else findNavController().navigateUp()
             }
-            findNavController().navigateUp()
+
         }
 
         binding.edit.setText(textPost)
@@ -48,6 +47,11 @@ class EditPostFragment : Fragment() {
 
         binding.ok.setOnClickListener {
             endEdit()
+        }
+
+        viewModel.postCreated.observe(viewLifecycleOwner) {
+            viewModel.loadPosts()
+            findNavController().navigateUp()
         }
 
         binding.icEdit.setOnClickListener {
