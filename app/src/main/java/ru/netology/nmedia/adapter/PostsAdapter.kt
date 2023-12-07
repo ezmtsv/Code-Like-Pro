@@ -8,6 +8,7 @@ import android.widget.PopupMenu
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.CardPostBinding
 import ru.netology.nmedia.dto.Post
@@ -15,7 +16,8 @@ import ru.netology.nmedia.util.AndroidUtils
 
 interface OnIteractionListener {
     fun onLike(post: Post)
-//    fun onShare(post: Post)
+
+    //    fun onShare(post: Post)
     fun onEdit(post: Post)
     fun onRemove(post: Post)
 //    fun openLinkVideo(post: Post)
@@ -42,7 +44,7 @@ class PostViewHolder(
     private val binding: CardPostBinding,
     private val onIteractionListener: OnIteractionListener
 ) : RecyclerView.ViewHolder(binding.root) {
-    @SuppressLint("SuspiciousIndentation", "SimpleDateFormat")
+    @SuppressLint("SuspiciousIndentation", "SimpleDateFormat", "CheckResult")
     fun bind(post: Post) {
 
         binding.apply {
@@ -65,6 +67,24 @@ class PostViewHolder(
             icLike.setOnClickListener {
                 onIteractionListener.onLike(post)
             }
+
+            Glide.with(avatar)
+                .load("http://10.0.2.2:9999/avatars/${post.authorAvatar}")
+                .placeholder(R.drawable.ic_loading_100dp)
+                .error(R.drawable.ic_error_100dp)
+                .timeout(10_000)
+                .circleCrop()
+                .into(avatar)
+
+            post.attachment?.url?.let { url ->
+                groupVideo.visibility = View.VISIBLE
+                Glide.with(idVideo)
+                    .load("http://10.0.2.2:9999/images/$url")
+                    .placeholder(R.drawable.ic_loading_100dp)
+                    .timeout(10_000)
+                    .into(idVideo)
+            }
+
 //            idVideo.setOnClickListener {
 //                onIteractionListener.openLinkVideo(post)
 //            }

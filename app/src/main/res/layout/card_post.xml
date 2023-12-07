@@ -90,8 +90,8 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:visibility="gone"
-        app:constraint_referenced_ids="id_video, play">
+        android:visibility="visible"
+        app:constraint_referenced_ids="id_video">
     </androidx.constraintlayout.widget.Group>
     <ImageView
         android:id="@+id/id_video"
@@ -102,6 +102,7 @@
         app:layout_constraintStart_toStartOf="parent"
         android:src="@drawable/backgroundvideo"
         android:contentDescription="@string/preview_video" />
+   <!--
     <ImageButton
         android:id="@+id/play"
         android:layout_width="wrap_content"
@@ -112,7 +113,7 @@
         app:layout_constraintBottom_toBottomOf="@id/id_video"
         android:src="@drawable/play_arrow_24"
         />
-
+-->
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/barrierContent"
         android:layout_width="wrap_content"
