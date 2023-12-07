@@ -83,7 +83,10 @@ class PostViewHolder(
                     .placeholder(R.drawable.ic_loading_100dp)
                     .timeout(10_000)
                     .into(idVideo)
+            } ?: run {
+                groupVideo.visibility = View.GONE
             }
+
 
 //            idVideo.setOnClickListener {
 //                onIteractionListener.openLinkVideo(post)
