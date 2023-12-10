@@ -90,7 +90,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:visibility="visible"
+        android:visibility="gone"
         app:constraint_referenced_ids="id_video">
     </androidx.constraintlayout.widget.Group>
     <ImageView
