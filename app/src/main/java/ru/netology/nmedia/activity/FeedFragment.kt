@@ -1,9 +1,11 @@
 package ru.netology.nmedia.activity
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -79,10 +81,15 @@ class FeedFragment : Fragment() {
 
         })
         binding.list.adapter = adapter
+        val cntx = context
         viewModel.data.observe(viewLifecycleOwner) { state ->
             adapter.submitList(state.posts)
             binding.progress.isVisible = state.loading
             binding.errorGroup.isVisible = state.error
+            if (state.codeErrServ >= 500) {
+                cntx?.toast(state.errServMessage)
+            }
+
             binding.emptyText.isVisible = state.empty
         }
 
@@ -105,4 +112,7 @@ class FeedFragment : Fragment() {
         )
         return binding.root
     }
+
+    private fun Context.toast(message: CharSequence) =
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
 }

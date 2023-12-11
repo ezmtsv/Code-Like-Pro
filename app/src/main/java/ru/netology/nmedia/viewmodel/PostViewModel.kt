@@ -2,7 +2,6 @@ package ru.netology.nmedia.viewmodel
 
 import android.annotation.SuppressLint
 import android.app.Application
-import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -14,7 +13,6 @@ import ru.netology.nmedia.util.SingleLiveEvent
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Calendar
-import kotlin.concurrent.thread
 
 private val empty = Post(
     id = 0,
@@ -42,13 +40,13 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
     fun loadPosts() {
         _data.value = FeedModel(loading = true)
-        repository.getAllAsync(object : PostRepository.GetAllCallback {
+        repository.getAllAsync(object : PostRepository.Callback<List<Post>> {
             override fun onSuccess(posts: List<Post>) {
-                _data.postValue(FeedModel(posts = posts, empty = posts.isEmpty()))
+                _data.value = FeedModel(posts = posts, empty = posts.isEmpty(), codeErrServ = 200)
             }
 
-            override fun onError(e: Exception) {
-                _data.postValue(FeedModel(error = true))
+            override fun onError(e: Exception, txt: String) {
+                _data.value = FeedModel(error = true, codeErrServ = 500, errServMessage = txt)
             }
         })
     }
@@ -61,13 +59,15 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                     repository.updateContentAsync(
                         post,
                         text,
-                        object : PostRepository.GetPostCallBack {
+                        object : PostRepository.Callback<Post> {
                             override fun onSuccess(post: Post) {
                                 _postCreated.postValue(Unit)
                             }
 
-                            override fun onError(e: Exception) {
+                            override fun onError(e: Exception, txt: String) {
                                 println(e.stackTraceToString())
+                                _data.value =
+                                    FeedModel(error = true, codeErrServ = 500, errServMessage = txt)
                             }
                         })
 
@@ -75,12 +75,14 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
             } else {
                 repository.saveAsync(
                     post.copy(content = text),
-                    object : PostRepository.GetPostCallBack {
+                    object : PostRepository.Callback<Post> {
                         override fun onSuccess(post: Post) {
                             _postCreated.postValue(Unit)
                         }
 
-                        override fun onError(e: Exception) {
+                        override fun onError(e: Exception, txt: String) {
+                            _data.value =
+                                FeedModel(error = true, codeErrServ = 500, errServMessage = txt)
                             println(e.stackTraceToString())
                         }
                     })
@@ -95,18 +97,19 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun like(post: Post) {
-        repository.likeAsync(post, object : PostRepository.GetPostCallBack {
+        repository.likeAsync(post, object : PostRepository.Callback<Post> {
             override fun onSuccess(post: Post) {
-                _data.postValue(
-                    _data.value?.copy(posts = _data.value?.posts.orEmpty()
-                        .map {
-                            if (it.id == post.id) post else it
-                        }
+                _data.value =
+                    _data.value?.copy(
+                        posts = _data.value?.posts.orEmpty()
+                            .map {
+                                if (it.id == post.id) post else it
+                            }, codeErrServ = 200
                     )
-                )
             }
 
-            override fun onError(e: Exception) {
+            override fun onError(e: Exception, txt: String) {
+                _data.value = FeedModel(error = true, codeErrServ = 500, errServMessage = txt)
                 println(e.stackTraceToString())
             }
         })
@@ -115,22 +118,23 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     fun remove(id: Long) {
         val old = _data.value?.posts.orEmpty()
         try {
-            repository.removeByIdAsync(id, object : PostRepository.DelPostCallBack {
-                override fun onSuccess(answer: String) {
-                    _data.postValue(
-                        _data.value?.copy(posts = _data.value?.posts.orEmpty()
-                            .filter { it.id != id }
+            repository.removeByIdAsync(id, object : PostRepository.Callback<Unit> {
+                override fun onSuccess(post: Unit) {
+                    _data.value =
+                        _data.value?.copy(
+                            posts = _data.value?.posts.orEmpty()
+                                .filter { it.id != id }, codeErrServ = 200
                         )
-                    )
                 }
 
-                override fun onError(e: Exception) {
-                    _data.postValue(_data.value?.copy(posts = old))
+                override fun onError(e: Exception, txt: String) {
+                    _data.value = _data.value?.copy(posts = old)
                     println(e.stackTraceToString())
                 }
-            })
+            }
+            )
         } catch (e: IOException) {
-            _data.postValue(_data.value?.copy(posts = old))
+            _data.value = _data.value?.copy(posts = old)
         }
 
     }
