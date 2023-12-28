@@ -10,6 +10,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
 import ru.netology.nmedia.R
 import ru.netology.nmedia.adapter.OnIteractionListener
 import ru.netology.nmedia.adapter.PostsAdapter
@@ -32,6 +33,7 @@ class FeedFragment : Fragment() {
 
         val binding = FragmentFeedBinding.inflate(inflater, container, false)
         val viewModel: PostViewModel by activityViewModels()
+
         viewModel.cancelEdit()
         val adapter = PostsAdapter(object : OnIteractionListener {
             override fun onLike(post: Post) {
@@ -84,17 +86,18 @@ class FeedFragment : Fragment() {
         val cntx = context
         viewModel.data.observe(viewLifecycleOwner) { state ->
             adapter.submitList(state.posts)
-            binding.progress.isVisible = state.loading
-            binding.errorGroup.isVisible = state.error
-            if (state.codeErrServ >= 500) {
-                cntx?.toast(state.errServMessage)
-            }
 
             binding.emptyText.isVisible = state.empty
         }
 
-        binding.retryButton.setOnClickListener {
-            viewModel.loadPosts()
+        viewModel.dataState.observe(viewLifecycleOwner) { state ->
+            binding.progress.isVisible = state.loading
+            binding.swipeRefreshLayout.isRefreshing = state.refreshing
+            if (state.error) {
+                Snackbar.make(binding.root, R.string.error_loading, Snackbar.LENGTH_LONG)
+                    .setAction(R.string.retry_loading) { viewModel.loadPosts() }
+                    .show()
+            }
         }
 
         binding.fab.setOnClickListener {
@@ -102,8 +105,7 @@ class FeedFragment : Fragment() {
         }
 
         binding.swipeRefreshLayout.setOnRefreshListener {
-            viewModel.loadPosts()
-            binding.swipeRefreshLayout.isRefreshing = false
+            viewModel.refreshPosts()
         }
         binding.swipeRefreshLayout.setColorSchemeResources(
             android.R.color.holo_blue_bright,

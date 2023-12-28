@@ -31,7 +31,6 @@ class NewPostFragment : Fragment() {
                 val content = binding.edit.text.toString()
                 viewModel.savePost(content)
             }
-            //findNavController().navigateUp()
         }
         viewModel.postCreated.observe(viewLifecycleOwner) {
             viewModel.loadPosts()
