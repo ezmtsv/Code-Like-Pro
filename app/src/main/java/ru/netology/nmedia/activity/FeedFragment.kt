@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.isVisible
+import androidx.core.view.size
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -85,8 +86,10 @@ class FeedFragment : Fragment() {
         binding.list.adapter = adapter
         val cntx = context
         viewModel.data.observe(viewLifecycleOwner) { state ->
-            adapter.submitList(state.posts)
-
+            val newPost = adapter.currentList.size < state.posts.size
+            adapter.submitList(state.posts) {
+                if (newPost) binding.list.smoothScrollToPosition(0)
+            }
             binding.emptyText.isVisible = state.empty
         }
 

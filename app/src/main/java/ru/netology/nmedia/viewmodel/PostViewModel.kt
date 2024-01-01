@@ -65,7 +65,9 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         edited.value?.let { post ->
             viewModelScope.launch {
                 try {
-                    repository.saveAsync(post.copy(content = content))
+                    _dataState.value = FeedModelState(loading = true)
+                    if (post.id == 0L) repository.saveAsync(post.copy(content = content))
+                    else repository.updateContentAsync(post, content)
                     _dataState.value = FeedModelState()
                 } catch (e: Exception) {
                     _dataState.value = FeedModelState(error = true)
@@ -92,7 +94,9 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     fun remove(id: Long) {
         viewModelScope.launch {
             try {
+                _dataState.value = FeedModelState(loading = true)
                 repository.removeByIdAsync(id)
+                _dataState.value = FeedModelState()
             } catch (e: Exception) {
                 _dataState.value = FeedModelState(error = true)
             }
