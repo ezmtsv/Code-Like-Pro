@@ -67,7 +67,7 @@ class PostViewHolder(
             icLike.setOnClickListener {
                 onIteractionListener.onLike(post)
             }
-
+            //println("avatar ${post.authorAvatar}")
             Glide.with(avatar)
                 .load("http://10.0.2.2:9999/avatars/${post.authorAvatar}")
                 .placeholder(R.drawable.ic_loading_100dp)
@@ -76,16 +76,16 @@ class PostViewHolder(
                 .circleCrop()
                 .into(avatar)
 
-            post.attachment?.url?.let { url ->
-                groupVideo.visibility = View.VISIBLE
-                Glide.with(idVideo)
-                    .load("http://10.0.2.2:9999/images/$url")
-                    .placeholder(R.drawable.ic_loading_100dp)
-                    .timeout(10_000)
-                    .into(idVideo)
-            } ?: run {
-                groupVideo.visibility = View.GONE
-            }
+//            post.attachment?.url?.let { url ->
+//                groupVideo.visibility = View.VISIBLE
+//                Glide.with(idVideo)
+//                    .load("http://10.0.2.2:9999/images/$url")
+//                    .placeholder(R.drawable.ic_loading_100dp)
+//                    .timeout(10_000)
+//                    .into(idVideo)
+//            } ?: run {
+//                groupVideo.visibility = View.GONE
+//            }
 
 
 //            idVideo.setOnClickListener {
