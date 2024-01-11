@@ -76,7 +76,7 @@ class FragmentCard : Fragment() {
             }
         }
 
-        viewModel.data.observe(viewLifecycleOwner) { state ->
+        viewModel.dataState.observe(viewLifecycleOwner) { state ->
             binding.progressCard.isVisible = state.loading
         }
         return binding.root

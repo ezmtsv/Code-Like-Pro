@@ -1,14 +1,28 @@
-## Домашнее задание к занятию «7. Retrofit (CRUD)»
+## Домашнее задание к занятию «11. Coroutines в Android»
 
-#### Задача №1. Buggy Server
+#### Задача №1. Remove & likes
 
 Легенда
-На лекции мы организовали только обработку позитивного сценария: нам приходят ответы с кодом 2xx, и мы можем обработать тело ответа (если оно есть).
+Используя код и сервер из лекции, реализуйте в проекте функциональность удаления и проставления лайков. Для этого нужно отредактировать PostViewModel и PostRepositoryImpl:
 
-Давайте рассмотрим альтернативный, не очень частый сценарий: в 50 % случаев сервер будет присылать не 2xx коды ответа.
+// PostViewModel
+fun likeById(id: Long) {
+    TODO()
+}
 
-Возьмите сервер из каталога server и реализуйте обработку подобного рода ошибок. Как реализовать ошибку, вы решаете сами.
+fun removeById(id: Long) {
+    TODO()
+}
+
+// PostRepositoryImpl
+override suspend fun removeById(id: Long) {
+    TODO("Not yet implemented")
+}
+
+override suspend fun likeById(id: Long) {
+    TODO("Not yet implemented")
+}
 
 
 
-[Описание задания 7](https://github.com/netology-code/andin-homeworks/tree/ANDIN-36/07_crud)
+[Описание задания 11](https://github.com/netology-code/andin-homeworks/tree/ANDIN-36/10_mainscope)

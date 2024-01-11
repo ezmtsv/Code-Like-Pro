@@ -10,8 +10,8 @@ data class Post(
     val published: Long,
     val likedByMe: Boolean,
     val likes: Int = 0,
-    val authorAvatar: String? = null,
-    var attachment: Attachment? = null,
+    val authorAvatar: String = "",
+//    var attachment: Attachment? = null,
 //    val countRepost: Int = 0,
 //    val countViews: Int = 0,
 //    val linkVideo: String = ""
@@ -19,6 +19,6 @@ data class Post(
 
 data class Attachment(
     val url: String,
-    val description: String?,
+    val description: String,
     val type: AttachmentType,
 )
