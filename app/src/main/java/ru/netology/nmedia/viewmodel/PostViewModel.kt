@@ -5,8 +5,12 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.map
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.db.AppDb
 import ru.netology.nmedia.dto.Post
@@ -25,7 +29,7 @@ private val empty = Post(
     likedByMe = false,
 //    countRepost = 0,
 //    countViews = 0,
-    published = 0
+    published = 0,
 )
 
 class PostViewModel(application: Application) : AndroidViewModel(application) {
@@ -34,18 +38,37 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
     private val edited = MutableLiveData(empty)
     private val _postCreated = SingleLiveEvent<Unit>()
-    var countPost: Int = 0
+
     val postCreated: LiveData<Unit>
         get() = _postCreated
-    val data: LiveData<FeedModel> = repository.data.map {
-        FeedModel(it, it.isEmpty())
+    val data: LiveData<FeedModel> = repository.data
+        .map(::FeedModel)
+        .catch { it.printStackTrace() }
+        .asLiveData(Dispatchers.Default)
+    val dataInvisible: LiveData<FeedModel> = repository.dataInvisible
+        .map(::FeedModel)
+        .catch { it.printStackTrace() }
+        .asLiveData(Dispatchers.Default)
+
+    val newerCount: LiveData<Int> = data.switchMap {
+        repository.getNewer(it.posts.firstOrNull()?.id ?: 0L)
+            .catch { e -> e.printStackTrace() }
+            .asLiveData(Dispatchers.Default)
     }
+
     private val _dataState = MutableLiveData<FeedModelState>()
     val dataState: LiveData<FeedModelState>
         get() = _dataState
 
     init {
         loadPosts()
+        getPosts()
+    }
+
+    private fun getPosts() {
+        viewModelScope.launch {
+            repository.getPosts()
+        }
     }
 
     fun loadPosts() {
@@ -85,17 +108,6 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             try {
                 repository.likeAsync(post)
-            } catch (e: Exception) {
-                _dataState.value = FeedModelState(error = true)
-            }
-        }
-    }
-
-    fun remove(id: Long) {
-        viewModelScope.launch {
-            try {
-                _dataState.value = FeedModelState(loading = true)
-                repository.removeByIdAsync(id)
                 _dataState.value = FeedModelState()
             } catch (e: Exception) {
                 _dataState.value = FeedModelState(error = true)
@@ -103,12 +115,18 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-//    fun share(id: Long) {
-//        thread {
-//            repository.share(id)
-//            loadPosts()
-//        }
-//    }
+    fun remove(post: Post) {
+        viewModelScope.launch {
+            try {
+                _dataState.value = FeedModelState(loading = true)
+                repository.removeByIdAsync(post)
+                _dataState.value = FeedModelState()
+            } catch (e: Exception) {
+                _dataState.value = FeedModelState(error = true)
+            }
+        }
+    }
+
 
     fun cancelEdit() {
         edited.value = empty
@@ -122,6 +140,17 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                 _dataState.value = FeedModelState()
             } catch (e: Exception) {
                 _dataState.value = FeedModelState(error = true)
+            }
+        }
+    }
+
+    fun showPosts() {
+        viewModelScope.launch {
+            val posts = dataInvisible.value?.posts?.map {
+                it.copy(visibility = true)
+            }
+            posts?.let {
+                repository.savePosts(posts)
             }
         }
     }

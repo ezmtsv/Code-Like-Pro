@@ -60,7 +60,7 @@ class FragmentCard : Fragment() {
                     }
 
                     override fun onRemove(post: Post) {
-                        viewModel.remove(post.id)
+                        viewModel.remove(post)
                         findNavController().navigateUp()
                     }
 

@@ -11,6 +11,7 @@ data class Post(
     val likedByMe: Boolean,
     val likes: Int = 0,
     val authorAvatar: String = "",
+    val visibility: Boolean = true,
 //    var attachment: Attachment? = null,
 //    val countRepost: Int = 0,
 //    val countViews: Int = 0,
