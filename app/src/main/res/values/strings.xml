@@ -26,5 +26,9 @@
     <string name="notification_new_post">%1$s added new post</string>
     <string name="empty_posts">No Posts!</string>
     <string name="retry_loading">Reload</string>
-    <string name="error_loading">Error loading</string>
+    <string name="error_loading">No connection</string>
+    <string name="content_description_icon_notify">icon notification</string>
+    <string name="news">News</string>
+    <string name="new_posts">New posts</string>
+    <string name="events">Events</string>
 </resources>

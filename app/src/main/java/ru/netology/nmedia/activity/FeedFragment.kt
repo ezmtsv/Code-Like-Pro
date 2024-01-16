@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.isVisible
-import androidx.core.view.size
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -65,7 +64,7 @@ class FeedFragment : Fragment() {
             }
 
             override fun onRemove(post: Post) {
-                viewModel.remove(post.id)
+                viewModel.remove(post)
             }
 
 //            override fun openLinkVideo(post: Post) {
@@ -84,13 +83,20 @@ class FeedFragment : Fragment() {
 
         })
         binding.list.adapter = adapter
-        val cntx = context
+
         viewModel.data.observe(viewLifecycleOwner) { state ->
             val newPost = adapter.currentList.size < state.posts.size
             adapter.submitList(state.posts) {
                 if (newPost) binding.list.smoothScrollToPosition(0)
             }
             binding.emptyText.isVisible = state.empty
+        }
+
+        viewModel.dataInvisible.observe(viewLifecycleOwner) {
+            if (it.posts.isNotEmpty()) {
+                binding.newPostsGroup.visibility = View.VISIBLE
+//                println("Get invisible ${it.posts.size} posts ")
+            }
         }
 
         viewModel.dataState.observe(viewLifecycleOwner) { state ->
@@ -100,6 +106,12 @@ class FeedFragment : Fragment() {
                 Snackbar.make(binding.root, R.string.error_loading, Snackbar.LENGTH_LONG)
                     .setAction(R.string.retry_loading) { viewModel.loadPosts() }
                     .show()
+            }
+        }
+
+        viewModel.newerCount.observe(viewLifecycleOwner) {
+            if (it != 0) {
+                binding.newPostsGroup.visibility = View.VISIBLE
             }
         }
 
@@ -115,6 +127,10 @@ class FeedFragment : Fragment() {
             android.R.color.holo_green_light,
             android.R.color.holo_red_light,
         )
+        binding.btnAddNewPosts.setOnClickListener {
+            viewModel.showPosts()
+            binding.newPostsGroup.visibility = View.GONE
+        }
         return binding.root
     }
 
