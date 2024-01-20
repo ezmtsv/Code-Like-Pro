@@ -31,4 +31,8 @@
     <string name="news">News</string>
     <string name="new_posts">New posts</string>
     <string name="events">Events</string>
+    <string name="save">Save</string>
+    <string name="description_select_photo">Select photo</string>
+    <string name="description_take_photo">Take photo</string>
+    <string name="remove">Clear</string>
 </resources>

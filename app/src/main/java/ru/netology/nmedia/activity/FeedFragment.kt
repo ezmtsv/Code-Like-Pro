@@ -1,11 +1,9 @@
 package ru.netology.nmedia.activity
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -17,12 +15,14 @@ import ru.netology.nmedia.adapter.PostsAdapter
 import ru.netology.nmedia.databinding.FragmentFeedBinding
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.util.PostEditArg
+import ru.netology.nmedia.util.StringArg
 import ru.netology.nmedia.viewmodel.PostViewModel
 
 
 class FeedFragment : Fragment() {
     companion object {
         var Bundle.postEditArg: Long by PostEditArg
+        var Bundle.uriArg: String? by StringArg
     }
 
     override fun onCreateView(
@@ -81,6 +81,15 @@ class FeedFragment : Fragment() {
                 )
             }
 
+            override fun openSpacePhoto(post: Post) {
+                findNavController().navigate(
+                    R.id.action_feedFragment_to_spacePhoto,
+                    Bundle().apply {
+                        uriArg = post.attachment?.url
+                    }
+                )
+            }
+
         })
         binding.list.adapter = adapter
 
@@ -95,7 +104,6 @@ class FeedFragment : Fragment() {
         viewModel.dataInvisible.observe(viewLifecycleOwner) {
             if (it.posts.isNotEmpty()) {
                 binding.newPostsGroup.visibility = View.VISIBLE
-//                println("Get invisible ${it.posts.size} posts ")
             }
         }
 
@@ -134,6 +142,4 @@ class FeedFragment : Fragment() {
         return binding.root
     }
 
-    private fun Context.toast(message: CharSequence) =
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
 }
