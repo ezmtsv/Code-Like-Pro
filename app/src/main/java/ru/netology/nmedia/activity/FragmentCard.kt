@@ -10,6 +10,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.FeedFragment.Companion.postEditArg
+import ru.netology.nmedia.activity.FeedFragment.Companion.uriArg
 import ru.netology.nmedia.adapter.OnIteractionListener
 import ru.netology.nmedia.adapter.PostViewHolder
 import ru.netology.nmedia.databinding.CardPostBinding
@@ -71,6 +72,15 @@ class FragmentCard : Fragment() {
 
                     override fun openCardPost(post: Post) {
 
+                    }
+
+                    override fun openSpacePhoto(post: Post) {
+                        findNavController().navigate(
+                            R.id.action_fragmentCard_to_spacePhoto,
+                            Bundle().apply {
+                                uriArg = post.attachment?.url
+                            }
+                        )
                     }
                 }).bind(post)
             }

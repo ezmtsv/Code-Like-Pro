@@ -37,6 +37,10 @@ interface PostDao {
             post.published,
         )
 
+    //    @Query("UPDATE PostEntity SET visibility = 1 WHERE id = :id")
+    //    suspend fun setVisible(id: Long)
+
+
     @Query(
         """
         UPDATE PostEntity SET

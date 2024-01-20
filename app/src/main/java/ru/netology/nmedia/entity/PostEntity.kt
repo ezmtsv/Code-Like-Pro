@@ -1,7 +1,9 @@
 package ru.netology.nmedia.entity
 
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import ru.netology.nmedia.dto.Attachment
 import ru.netology.nmedia.dto.Post
 
 @Entity
@@ -15,7 +17,8 @@ data class PostEntity(
     val likes: Int = 0,
     val authorAvatar: String = "",
     val visibility: Boolean = true,
-//    val attachment: Attachment? = null,
+    @Embedded
+    val attachment: Attachment? = null,
 //    val countRepost: Int = 0,
 //    val countViews: Int = 0,
 //    val linkVideo: String = ""
@@ -29,7 +32,7 @@ data class PostEntity(
         likes,
         authorAvatar,
         visibility,
-//        attachment,
+        attachment,
 //        countRepost,
 //        countViews,
 //        linkVideo
@@ -46,7 +49,7 @@ data class PostEntity(
                 dto.likes,
                 dto.authorAvatar,
                 dto.visibility,
-//                dto.attachment,
+                dto.attachment,
 //                dto.countRepost,
 //                dto.countViews,
 //                dto.linkVideo
