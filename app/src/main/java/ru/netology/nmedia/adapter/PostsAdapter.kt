@@ -23,6 +23,7 @@ interface OnIteractionListener {
 //    fun openLinkVideo(post: Post)
 
     fun openCardPost(post: Post)
+    fun openSpacePhoto(post: Post)
 }
 
 class PostsAdapter(
@@ -76,18 +77,20 @@ class PostViewHolder(
                 .circleCrop()
                 .into(avatar)
 
-//            post.attachment?.url?.let { url ->
-//                groupVideo.visibility = View.VISIBLE
-//                Glide.with(idVideo)
-//                    .load("http://10.0.2.2:9999/images/$url")
-//                    .placeholder(R.drawable.ic_loading_100dp)
-//                    .timeout(10_000)
-//                    .into(idVideo)
-//            } ?: run {
-//                groupVideo.visibility = View.GONE
-//            }
+            post.attachment?.url?.let { url ->
+                groupVideo.visibility = View.VISIBLE
+                Glide.with(idVideo)
+                    .load("http://10.0.2.2:9999/media/$url")
+                    .placeholder(R.drawable.ic_loading_100dp)
+                    .timeout(10_000)
+                    .into(idVideo)
+            } ?: run {
+                groupVideo.visibility = View.GONE
+            }
 
-
+            idVideo.setOnClickListener {
+                onIteractionListener.openSpacePhoto(post)
+            }
 //            idVideo.setOnClickListener {
 //                onIteractionListener.openLinkVideo(post)
 //            }
