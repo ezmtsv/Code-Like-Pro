@@ -13,6 +13,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 
 import ru.netology.nmedia.api.PostsApi
+import ru.netology.nmedia.auth.AuthState
 import ru.netology.nmedia.dao.PostDao
 import ru.netology.nmedia.dto.Attachment
 import ru.netology.nmedia.dto.Media
@@ -46,7 +47,7 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
             val posts = response.body() ?: throw ApiError(response.code(), response.message())
 
 
-            val _posts = posts.map { post ->
+            val postsUpdata = posts.map { post ->
                 if (postsFlow.value.toDto()
                         .find { it.id == post.id && it.visibility } != null
                 ) post.copy(visibility = true)
@@ -56,7 +57,7 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
 
 
             dao.insert(
-                _posts.map {
+                postsUpdata.map {
                     PostEntity.fromDto(it)
                 })
 
@@ -202,6 +203,21 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
     override suspend fun getPosts() {
         dao.getAllPosts().flowOn(Dispatchers.IO).collect { posts ->
             postsFlow.update { posts }
+        }
+    }
+
+    override suspend fun userAuth(login: String, pass: String): AuthState {
+        try {
+            val response = PostsApi.retrofitService.updateUser(login, pass)
+            if (!response.isSuccessful) {
+                println("Error Auth")
+                throw ApiError(response.code(), response.message())
+            }
+            return response.body() ?: throw ApiError(response.code(), response.message())
+        } catch (e: IOException) {
+            throw NetworkError
+        } catch (e: Exception) {
+            throw UnknownError
         }
     }
 

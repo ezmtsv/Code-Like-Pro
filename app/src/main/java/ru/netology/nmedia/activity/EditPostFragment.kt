@@ -8,13 +8,16 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.FeedFragment.Companion.postEditArg
 import ru.netology.nmedia.databinding.FragmentEditPostBinding
 import ru.netology.nmedia.util.AndroidUtils.focusAndShowKeyboard
 import ru.netology.nmedia.viewmodel.PostViewModel
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class EditPostFragment : Fragment() {
+
     private val viewModel by activityViewModels<PostViewModel>()
     override fun onCreateView(
         inflater: LayoutInflater,

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -13,6 +14,7 @@ import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.CardPostBinding
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.util.AndroidUtils
+import ru.netology.nmedia.viewmodel.AuthViewModel.Companion.userAuth
 
 interface OnIteractionListener {
     fun onLike(post: Post)
@@ -66,6 +68,7 @@ class PostViewHolder(
 //            else groupVideo.visibility = View.GONE
             groupVideo.visibility = View.GONE
             icLike.setOnClickListener {
+                if (!userAuth) icLike.isChecked = post.likedByMe
                 onIteractionListener.onLike(post)
             }
             //println("avatar ${post.authorAvatar}")
@@ -100,6 +103,8 @@ class PostViewHolder(
 //            icShare.setOnClickListener {
 //                onIteractionListener.onShare(post)
 //            }
+
+            menu.isVisible = post.ownedByMe
             menu.setOnClickListener {
                 PopupMenu(it.context, it).apply {
                     inflate(R.menu.options_post)

@@ -13,21 +13,18 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.FragmentNewPostBinding
-import ru.netology.nmedia.util.AndroidUtils
 import ru.netology.nmedia.util.AndroidUtils.focusAndShowKeyboard
 import ru.netology.nmedia.util.StringArg
 import ru.netology.nmedia.viewmodel.PostViewModel
 import android.view.*
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.net.toFile
-import androidx.core.view.MenuHost
-import androidx.lifecycle.Lifecycle
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
-
+@OptIn(ExperimentalCoroutinesApi::class)
 class NewPostFragment : Fragment() {
     companion object {
         var Bundle.textArg: String? by StringArg
@@ -40,9 +37,8 @@ class NewPostFragment : Fragment() {
     ): View {
         val viewModel by activityViewModels<PostViewModel>()
         val binding = FragmentNewPostBinding.inflate(layoutInflater, container, false)
-        var phtoEmpty: Boolean = true
+        var phtoEmpty = true
 
-        setHasOptionsMenu(true)
         viewModel.postCreated.observe(viewLifecycleOwner) {
             viewModel.loadPosts()
             findNavController().navigateUp()
@@ -116,6 +112,11 @@ class NewPostFragment : Fragment() {
                         } else {
                             context?.toast("Для создания поста нужен контент!")
                         }
+                        true
+                    }
+
+                    androidx.appcompat.R.id.home -> {
+                        println("home")
                         true
                     }
 

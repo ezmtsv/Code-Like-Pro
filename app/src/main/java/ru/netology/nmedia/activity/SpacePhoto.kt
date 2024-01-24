@@ -18,7 +18,7 @@ class SpacePhoto : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val binding = FragmentSpacePhotoBinding.inflate(inflater, container, false)
         val uri = arguments?.uriArg
 

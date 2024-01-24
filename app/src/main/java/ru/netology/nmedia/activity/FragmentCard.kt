@@ -8,17 +8,21 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.FeedFragment.Companion.postEditArg
 import ru.netology.nmedia.activity.FeedFragment.Companion.uriArg
 import ru.netology.nmedia.adapter.OnIteractionListener
 import ru.netology.nmedia.adapter.PostViewHolder
 import ru.netology.nmedia.databinding.CardPostBinding
+import ru.netology.nmedia.dialogs.DialogAuth
 import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.viewmodel.AuthViewModel
 import ru.netology.nmedia.viewmodel.PostViewModel
 
-
+@OptIn(ExperimentalCoroutinesApi::class)
 class FragmentCard : Fragment() {
+
     private val viewModel by activityViewModels<PostViewModel>()
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,7 +38,9 @@ class FragmentCard : Fragment() {
             post?.let {
                 PostViewHolder(binding, object : OnIteractionListener {
                     override fun onLike(post: Post) {
-                        viewModel.like(post)
+                        if (AuthViewModel.userAuth) viewModel.like(post)
+                        else DialogAuth.newInstance(AuthViewModel.DIALOG_IN)
+                            .show(childFragmentManager, "TAG")
                     }
 
 //                    override fun onShare(post: Post) {
@@ -91,5 +97,4 @@ class FragmentCard : Fragment() {
         }
         return binding.root
     }
-
 }

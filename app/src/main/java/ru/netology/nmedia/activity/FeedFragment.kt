@@ -9,16 +9,20 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import ru.netology.nmedia.R
 import ru.netology.nmedia.adapter.OnIteractionListener
 import ru.netology.nmedia.adapter.PostsAdapter
 import ru.netology.nmedia.databinding.FragmentFeedBinding
+import ru.netology.nmedia.dialogs.DialogAuth
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.util.PostEditArg
 import ru.netology.nmedia.util.StringArg
+import ru.netology.nmedia.viewmodel.AuthViewModel.Companion.DIALOG_IN
+import ru.netology.nmedia.viewmodel.AuthViewModel.Companion.userAuth
 import ru.netology.nmedia.viewmodel.PostViewModel
 
-
+@OptIn(ExperimentalCoroutinesApi::class)
 class FeedFragment : Fragment() {
     companion object {
         var Bundle.postEditArg: Long by PostEditArg
@@ -37,7 +41,10 @@ class FeedFragment : Fragment() {
         viewModel.cancelEdit()
         val adapter = PostsAdapter(object : OnIteractionListener {
             override fun onLike(post: Post) {
-                viewModel.like(post)
+                if (userAuth) viewModel.like(post)
+                else {
+                    DialogAuth.newInstance(DIALOG_IN).show(childFragmentManager, "TAG")
+                }
             }
 
 //            override fun onShare(post: Post) {
@@ -124,7 +131,8 @@ class FeedFragment : Fragment() {
         }
 
         binding.fab.setOnClickListener {
-            findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
+            if (userAuth) findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
+            else DialogAuth.newInstance(DIALOG_IN).show(childFragmentManager, "TAG")
         }
 
         binding.swipeRefreshLayout.setOnRefreshListener {

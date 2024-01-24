@@ -36,4 +36,14 @@
     <string name="description_select_photo">Выбрать фото</string>
     <string name="description_take_photo">Сделать фото</string>
     <string name="remove">Удалить</string>
+    <string name="sign_in">Войти</string>
+    <string name="sign_up">Регистрация</string>
+    <string name="sign_out">Выход</string>
+    <string name="login">Логин</string>
+    <string name="password">Пароль</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
+    <string name="registration__removed">Регистрация удалена!</string>
+    <string name="student">student</string>
+    <string name="secret">secret</string>
 </resources>

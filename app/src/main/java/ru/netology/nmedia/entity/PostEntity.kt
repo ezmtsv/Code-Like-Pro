@@ -10,6 +10,7 @@ import ru.netology.nmedia.dto.Post
 data class PostEntity(
     @PrimaryKey
     val id: Long,
+    val authorId: Long,
     val author: String,
     val content: String,
     val published: Long,
@@ -25,6 +26,7 @@ data class PostEntity(
 ) {
     fun toDto() = Post(
         id,
+        authorId,
         author,
         content,
         published,
@@ -42,6 +44,7 @@ data class PostEntity(
         fun fromDto(dto: Post) =
             PostEntity(
                 dto.id,
+                dto.authorId,
                 dto.author,
                 dto.content,
                 dto.published,
