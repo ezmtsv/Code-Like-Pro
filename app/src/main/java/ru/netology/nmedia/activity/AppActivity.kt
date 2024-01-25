@@ -4,18 +4,34 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.widget.Toast
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.MenuProvider
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.findNavController
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.firebase.messaging.FirebaseMessaging
+import kotlinx.coroutines.launch
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
 import ru.netology.nmedia.databinding.ActivityAppBinding
+import ru.netology.nmedia.dialogs.DialogAuth
+import ru.netology.nmedia.viewmodel.AuthViewModel
+import ru.netology.nmedia.viewmodel.AuthViewModel.Companion.DIALOG_OUT
 
-class AppActivity : AppCompatActivity() {
+
+class AppActivity : AppCompatActivity(), DialogAuth.ReturnSelection {
+
+
+    val viewModel by viewModels<AuthViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding = ActivityAppBinding.inflate(layoutInflater)
@@ -40,7 +56,69 @@ class AppActivity : AppCompatActivity() {
                 }
             )
         }
+
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                viewModel.data.collect {
+                    invalidateOptionsMenu()
+                }
+            }
+        }
+
+        addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.menu_main, menu)
+            }
+
+            override fun onPrepareMenu(menu: Menu) {
+                menu.setGroupVisible(R.id.authenticated, viewModel.authenticated)
+                menu.setGroupVisible(R.id.unauthenticated, !viewModel.authenticated)
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                return when (menuItem.itemId) {
+                    R.id.signin -> {
+                        //AppAuth.getInstance().setAuth(5, "x-token")
+                        findNavController(R.id.nav_host_fragment).navigate(
+                            R.id.authFragment
+                        )
+                        true
+                    }
+
+                    R.id.signup -> {
+//                        findNavController(R.id.nav_host_fragment).navigate(
+//                            R.id.authFragment
+//                        )
+                        true
+                    }
+
+                    R.id.signout -> {
+                        DialogAuth.newInstance(DIALOG_OUT)
+                            .show(supportFragmentManager, "TAG")
+                        true
+                    }
+
+                    else -> false
+                }
+            }
+
+        })
+
         checkGoogleApiAvailability()
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        findNavController(R.id.nav_host_fragment).addOnDestinationChangedListener { _, destination, _ ->
+            supportActionBar?.setDisplayHomeAsUpEnabled(destination.id != R.id.feedFragment)
+
+        }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressedDispatcher.onBackPressed()
+        return true
     }
 
     private fun requestNotificationsPermission() {
@@ -75,4 +153,14 @@ class AppActivity : AppCompatActivity() {
             println(it)
         }
     }
+
+    override fun returnDialogValue(select: Int) {
+        if (select == DIALOG_OUT) {
+            viewModel.deleteAuth()
+            Toast.makeText(this@AppActivity,
+                getString(R.string.registration__removed), Toast.LENGTH_LONG)
+                .show()
+        }
+    }
+
 }

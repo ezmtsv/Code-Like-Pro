@@ -61,4 +61,9 @@
         android:name="ru.netology.nmedia.activity.SpacePhoto"
         android:label="fragment_space_photo"
         tools:layout="@layout/fragment_space_photo" />
+    <fragment
+        android:id="@+id/authFragment"
+        android:name="ru.netology.nmedia.activity.AuthFragment"
+        android:label="fragment_auth_fragment"
+        tools:layout="@layout/fragment_auth" />
 </navigation>
