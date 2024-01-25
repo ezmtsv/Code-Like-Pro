@@ -39,7 +39,8 @@ class DialogAuth : DialogFragment() {
                 DIALOG_IN -> {
                     textDialog.text = "Для установки лайков нужна авторизация, выполнить вход?"
                     btnYes.setOnClickListener {
-                        findNavController().navigate(R.id.authFragment)
+                        //findNavController().navigate(R.id.authFragment)
+                        backValue?.returnDialogValue(DIALOG_IN)
                         dismiss()
                     }
                 }
