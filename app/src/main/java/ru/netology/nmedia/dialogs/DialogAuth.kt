@@ -7,8 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
-import androidx.navigation.fragment.findNavController
-import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.FragmentDialogBinding
 import ru.netology.nmedia.error.UnknownError
 import ru.netology.nmedia.viewmodel.AuthViewModel.Companion.DIALOG_IN
@@ -66,7 +64,6 @@ class DialogAuth : DialogFragment() {
 
     override fun onStart() {
         super.onStart()
-        println("onStart()")
         dialog?.window?.setLayout(
             WindowManager.LayoutParams.MATCH_PARENT,
             WindowManager.LayoutParams.WRAP_CONTENT

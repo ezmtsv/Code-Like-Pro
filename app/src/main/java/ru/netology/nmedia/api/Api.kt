@@ -15,11 +15,14 @@ import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
 import retrofit2.http.Path
+import retrofit2.http.Query
 import ru.netology.nmedia.BuildConfig
 import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.auth.AuthState
 import ru.netology.nmedia.dto.Media
 import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.dto.PushMessage
+import ru.netology.nmedia.dto.PushToken
 
 private const val BASE_URL = "${BuildConfig.BASE_URL}/api/slow/"
 
@@ -72,9 +75,15 @@ interface PostsApiService {
     @FormUrlEncoded
     @POST("users/authentication")
     suspend fun updateUser(@Field("login") login: String, @Field("pass") pass: String): Response<AuthState>
+
+    @POST("users/push-tokens")
+    suspend fun sendPushToken(@Body pushToken: PushToken): Response<Unit>
+
+    @POST("${BuildConfig.BASE_URL}/api/pushes")
+    suspend fun sendTestPush(@Query ("token") token: String, @Body message: PushMessage): Response<Unit>
 }
 
-object PostsApi {
+object Api {
     val retrofitService: PostsApiService by lazy {
         retrofit.create(PostsApiService::class.java)
     }

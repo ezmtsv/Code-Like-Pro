@@ -39,6 +39,7 @@ private val empty = Post(
 //    countViews = 0,
     published = 0,
 )
+
 @ExperimentalCoroutinesApi
 class PostViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: PostRepository =
@@ -105,7 +106,9 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                 repository.getAllAsync()
                 _dataState.value = FeedModelState()
             } catch (e: Exception) {
-                _dataState.value = FeedModelState(error = true)
+                if (e.javaClass.name == "ru.netology.nmedia.error.AuthorisationError") {
+                    _dataState.value = FeedModelState(error403 = true)
+                } else _dataState.value = FeedModelState(error = true)
             }
         }
     }
@@ -184,7 +187,9 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                 repository.getAllAsync()
                 _dataState.value = FeedModelState()
             } catch (e: Exception) {
-                _dataState.value = FeedModelState(error = true)
+                if (e.javaClass.name == "ru.netology.nmedia.error.AuthorisationError") {
+                    _dataState.value = FeedModelState(error403 = true)
+                } else _dataState.value = FeedModelState(error = true)
             }
         }
     }

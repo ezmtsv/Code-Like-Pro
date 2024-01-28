@@ -100,6 +100,11 @@ class AppActivity : AppCompatActivity(), DialogAuth.ReturnSelection {
                         true
                     }
 
+                    R.id.testPush -> {
+                        viewModel.testPushhes("TEST PUSHES WOW!")
+                        true
+                    }
+
                     else -> false
                 }
             }
@@ -157,18 +162,22 @@ class AppActivity : AppCompatActivity(), DialogAuth.ReturnSelection {
     }
 
     override fun returnDialogValue(select: Int) {
-        when(select) {
+        when (select) {
             DIALOG_OUT -> {
-            viewModel.deleteAuth()
-            Toast.makeText(this@AppActivity,
-                getString(R.string.registration__removed), Toast.LENGTH_LONG)
-                .show()
+                viewModel.deleteAuth()
+                Toast.makeText(
+                    this@AppActivity,
+                    getString(R.string.registration__removed), Toast.LENGTH_LONG
+                )
+                    .show()
             }
+
             DIALOG_IN -> {
                 findNavController(R.id.nav_host_fragment).navigate(
                     R.id.authFragment
                 )
             }
+
             DIALOG_REG -> {
                 println("fragment registration")
             }
