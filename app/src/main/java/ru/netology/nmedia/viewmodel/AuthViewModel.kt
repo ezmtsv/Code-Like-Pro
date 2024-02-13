@@ -6,22 +6,29 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.ktx.messaging
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import ru.netology.nmedia.api.Api
 import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.auth.AuthState
 import ru.netology.nmedia.db.AppDb
+import ru.netology.nmedia.dto.PushMessage
+import ru.netology.nmedia.dto.PushToken
 import ru.netology.nmedia.model.FeedModelState
 import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.repository.PostRepositoryImpl
 
 class AuthViewModel(application: Application) : AndroidViewModel(application) {
-companion object {
-    @Volatile
-    var userAuth: Boolean = false
-    const val DIALOG_OUT = 1
-    const val DIALOG_IN = 2
-    const val DIALOG_REG = 3
-}
+    companion object {
+        @Volatile
+        var userAuth: Boolean = false
+        const val DIALOG_OUT = 1
+        const val DIALOG_IN = 2
+        const val DIALOG_REG = 3
+    }
+
     private val repository: PostRepository =
         PostRepositoryImpl(AppDb.getInstance(application).postDao())
 
@@ -34,7 +41,7 @@ companion object {
 
     private val _dataState = MutableLiveData<FeedModelState>()
 
-    val dataState:LiveData<FeedModelState>
+    val dataState: LiveData<FeedModelState>
         get() = _dataState
 
     fun getAuthFromServer(login: String, pass: String) {
@@ -52,12 +59,24 @@ companion object {
                 _dataState.value = FeedModelState(error = true)
                 println(e.printStackTrace())
             }
-
         }
     }
 
     fun deleteAuth() {
         AppAuth.getInstance().removeAuth()
         userAuth = false
+    }
+
+    fun testPushhes(text: String) {
+        try {
+            viewModelScope.launch {
+                val token: String? = null
+                val stringToken = PushToken(token ?: Firebase.messaging.token.await())
+                Api.retrofitService.sendTestPush(stringToken.token, PushMessage(5, content = text))
+
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 }

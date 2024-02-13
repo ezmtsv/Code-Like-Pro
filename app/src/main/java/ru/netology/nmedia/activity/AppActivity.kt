@@ -25,7 +25,9 @@ import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
 import ru.netology.nmedia.databinding.ActivityAppBinding
 import ru.netology.nmedia.dialogs.DialogAuth
 import ru.netology.nmedia.viewmodel.AuthViewModel
+import ru.netology.nmedia.viewmodel.AuthViewModel.Companion.DIALOG_IN
 import ru.netology.nmedia.viewmodel.AuthViewModel.Companion.DIALOG_OUT
+import ru.netology.nmedia.viewmodel.AuthViewModel.Companion.DIALOG_REG
 
 
 class AppActivity : AppCompatActivity(), DialogAuth.ReturnSelection {
@@ -98,6 +100,11 @@ class AppActivity : AppCompatActivity(), DialogAuth.ReturnSelection {
                         true
                     }
 
+                    R.id.testPush -> {
+                        viewModel.testPushhes("TEST PUSHES WOW!")
+                        true
+                    }
+
                     else -> false
                 }
             }
@@ -155,11 +162,25 @@ class AppActivity : AppCompatActivity(), DialogAuth.ReturnSelection {
     }
 
     override fun returnDialogValue(select: Int) {
-        if (select == DIALOG_OUT) {
-            viewModel.deleteAuth()
-            Toast.makeText(this@AppActivity,
-                getString(R.string.registration__removed), Toast.LENGTH_LONG)
-                .show()
+        when (select) {
+            DIALOG_OUT -> {
+                viewModel.deleteAuth()
+                Toast.makeText(
+                    this@AppActivity,
+                    getString(R.string.registration__removed), Toast.LENGTH_LONG
+                )
+                    .show()
+            }
+
+            DIALOG_IN -> {
+                findNavController(R.id.nav_host_fragment).navigate(
+                    R.id.authFragment
+                )
+            }
+
+            DIALOG_REG -> {
+                println("fragment registration")
+            }
         }
     }
 

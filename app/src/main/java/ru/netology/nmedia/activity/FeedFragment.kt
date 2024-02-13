@@ -13,6 +13,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import ru.netology.nmedia.R
 import ru.netology.nmedia.adapter.OnIteractionListener
 import ru.netology.nmedia.adapter.PostsAdapter
+import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.databinding.FragmentFeedBinding
 import ru.netology.nmedia.dialogs.DialogAuth
 import ru.netology.nmedia.dto.Post
@@ -122,6 +123,23 @@ class FeedFragment : Fragment() {
                     .setAction(R.string.retry_loading) { viewModel.loadPosts() }
                     .show()
             }
+
+            if (state.error403) {
+                Snackbar.make(
+                    binding.root,
+                    "Ошибка авторизации, выполните вход",
+                    Snackbar.LENGTH_LONG
+                )
+                    .setAction("ВХОД") {
+                        AppAuth.getInstance().removeAuth()
+                        userAuth = false
+                        findNavController().navigate(
+                            R.id.authFragment
+                        )
+                    }
+                    .show()
+            }
+
         }
 
         viewModel.newerCount.observe(viewLifecycleOwner) {
