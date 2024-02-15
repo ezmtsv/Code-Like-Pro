@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.FragmentNewPostBinding
@@ -20,12 +19,16 @@ import android.view.*
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.net.toFile
+import androidx.fragment.app.viewModels
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import ru.netology.nmedia.di.DependencyContainer
+import ru.netology.nmedia.viewmodel.ViewModelFactory
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class NewPostFragment : Fragment() {
+    private val dependencyContainer = DependencyContainer.getInstance()
     companion object {
         var Bundle.textArg: String? by StringArg
     }
@@ -35,7 +38,16 @@ class NewPostFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val viewModel by activityViewModels<PostViewModel>()
+        val viewModel: PostViewModel by viewModels(
+            ownerProducer =:: requireParentFragment,
+            factoryProducer = {
+                ViewModelFactory(
+                    dependencyContainer.repository,
+                    dependencyContainer.appAuth,
+                    dependencyContainer.apiService
+                )
+            }
+        )
         val binding = FragmentNewPostBinding.inflate(layoutInflater, container, false)
         var phtoEmpty = true
 

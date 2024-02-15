@@ -23,17 +23,27 @@ import kotlinx.coroutines.launch
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
 import ru.netology.nmedia.databinding.ActivityAppBinding
+import ru.netology.nmedia.di.DependencyContainer
 import ru.netology.nmedia.dialogs.DialogAuth
 import ru.netology.nmedia.viewmodel.AuthViewModel
 import ru.netology.nmedia.viewmodel.AuthViewModel.Companion.DIALOG_IN
 import ru.netology.nmedia.viewmodel.AuthViewModel.Companion.DIALOG_OUT
 import ru.netology.nmedia.viewmodel.AuthViewModel.Companion.DIALOG_REG
+import ru.netology.nmedia.viewmodel.ViewModelFactory
 
 
 class AppActivity : AppCompatActivity(), DialogAuth.ReturnSelection {
 
-
-    val viewModel by viewModels<AuthViewModel>()
+    private val dependencyContainer = DependencyContainer.getInstance()
+    val viewModel: AuthViewModel by viewModels(
+        factoryProducer = {
+            ViewModelFactory(
+                dependencyContainer.repository,
+                dependencyContainer.appAuth,
+                dependencyContainer.apiService
+            )
+        }
+    )
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding = ActivityAppBinding.inflate(layoutInflater)
@@ -73,8 +83,8 @@ class AppActivity : AppCompatActivity(), DialogAuth.ReturnSelection {
             }
 
             override fun onPrepareMenu(menu: Menu) {
-                menu.setGroupVisible(R.id.authenticated, viewModel.authenticated)
-                menu.setGroupVisible(R.id.unauthenticated, !viewModel.authenticated)
+                menu.setGroupVisible(R.id.authenticated, AuthViewModel.userAuth)
+                menu.setGroupVisible(R.id.unauthenticated, !AuthViewModel.userAuth)
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {

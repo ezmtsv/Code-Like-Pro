@@ -4,13 +4,14 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.ktx.messaging
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import ru.netology.nmedia.api.Api
+import ru.netology.nmedia.api.PostsApiService
 import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.auth.AuthState
 import ru.netology.nmedia.db.AppDb
@@ -20,7 +21,11 @@ import ru.netology.nmedia.model.FeedModelState
 import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.repository.PostRepositoryImpl
 
-class AuthViewModel(application: Application) : AndroidViewModel(application) {
+class AuthViewModel(
+    private val repository: PostRepository,
+    private val appAuth: AppAuth,
+    private val apiService: PostsApiService
+) : ViewModel() {
     companion object {
         @Volatile
         var userAuth: Boolean = false
@@ -29,15 +34,16 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         const val DIALOG_REG = 3
     }
 
-    private val repository: PostRepository =
-        PostRepositoryImpl(AppDb.getInstance(application).postDao())
+//    private val repository: PostRepository =
+//        PostRepositoryImpl(AppDb.getInstance(application).postDao())
 
-    val data = AppAuth.getInstance().authState
+    val data = appAuth.authState
     val authenticated: Boolean
         get() = data.value.id != 0L
 
     val authState: LiveData<AuthState>
-        get() = AppAuth.getInstance().authState.asLiveData()
+        //get() = AppAuth.getInstance().authState.asLiveData()
+        get() = appAuth.authState.asLiveData()
 
     private val _dataState = MutableLiveData<FeedModelState>()
 
@@ -51,7 +57,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
                 val auth = repository.userAuth(login, pass)
                 if (auth.id != 0L && auth.token != null) {
                     userAuth = true
-                    AppAuth.run { getInstance().setAuth(auth.id, auth.token) }
+                    appAuth.run { appAuth.setAuth(auth.id, auth.token) }
                     _dataState.value = FeedModelState()
                 }
             } catch (e: Exception) {
@@ -63,7 +69,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun deleteAuth() {
-        AppAuth.getInstance().removeAuth()
+        appAuth.removeAuth()
         userAuth = false
     }
 
@@ -72,7 +78,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
             viewModelScope.launch {
                 val token: String? = null
                 val stringToken = PushToken(token ?: Firebase.messaging.token.await())
-                Api.retrofitService.sendTestPush(stringToken.token, PushMessage(5, content = text))
+                apiService.sendTestPush(stringToken.token, PushMessage(5, content = text))
 
             }
         } catch (e: Exception) {

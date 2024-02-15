@@ -10,11 +10,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import ru.netology.nmedia.api.Api
+import ru.netology.nmedia.di.DependencyContainer
 import ru.netology.nmedia.dto.PushToken
-import ru.netology.nmedia.viewmodel.AuthViewModel
 
-class AppAuth private constructor(context: Context) {
+private const val KEY_ID = "id"
+private const val KEY_TOKEN = "token"
+
+class AppAuth (context: Context) {
 
     private val prefs = context.getSharedPreferences("auth", Context.MODE_PRIVATE)
 
@@ -55,33 +57,30 @@ class AppAuth private constructor(context: Context) {
         CoroutineScope(Dispatchers.Default).launch {
             try {
                 val pushToken = PushToken(token ?: Firebase.messaging.token.await())
-                Api.retrofitService.sendPushToken(pushToken)
+                DependencyContainer.getInstance().apiService.sendPushToken(pushToken)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
     }
 
-    companion object {
-        private const val KEY_ID = "id"
-        private const val KEY_TOKEN = "token"
-
-        @Volatile
-        private var instance: AppAuth? = null
-
-        fun getInstance() = synchronized(this) {
-            instance
-                ?: throw IllegalStateException("getInstance should be called only after initApp")
-        }
-
-        fun initAuth(context: Context): AppAuth = instance ?: synchronized(this) {
-            instance ?: AppAuth(context).also {
-                AuthViewModel.userAuth = it.authState.value.token != null
-                instance = it
-            }
-
-        }
-    }
+//    companion object {
+//        @Volatile
+//        private var instance: AppAuth? = null
+//
+//        fun getInstance() = synchronized(this) {
+//            instance
+//                ?: throw IllegalStateException("getInstance should be called only after initApp")
+//        }
+//
+//        fun initAuth(context: Context): AppAuth = instance ?: synchronized(this) {
+//            instance ?: AppAuth(context).also {
+//                AuthViewModel.userAuth = it.authState.value.token != null
+//                instance = it
+//            }
+//
+//        }
+//    }
 
 }
 

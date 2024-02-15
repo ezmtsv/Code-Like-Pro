@@ -1,11 +1,10 @@
 package ru.netology.nmedia.viewmodel
 
 import android.annotation.SuppressLint
-import android.app.Application
 import android.net.Uri
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
@@ -16,14 +15,12 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.auth.AppAuth
-import ru.netology.nmedia.db.AppDb
 import ru.netology.nmedia.dto.MediaUpload
 import ru.netology.nmedia.dto.PhotoModel
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.model.FeedModel
 import ru.netology.nmedia.model.FeedModelState
 import ru.netology.nmedia.repository.PostRepository
-import ru.netology.nmedia.repository.PostRepositoryImpl
 import ru.netology.nmedia.util.SingleLiveEvent
 import java.io.File
 import java.text.SimpleDateFormat
@@ -41,9 +38,12 @@ private val empty = Post(
 )
 
 @ExperimentalCoroutinesApi
-class PostViewModel(application: Application) : AndroidViewModel(application) {
-    private val repository: PostRepository =
-        PostRepositoryImpl(AppDb.getInstance(application).postDao())
+class PostViewModel(
+    private val repository: PostRepository,
+    appAuth: AppAuth
+) : ViewModel() {
+//    private val repository: PostRepository =
+//        PostRepositoryImpl(AppDb.getInstance(application).postDao())
 
     private val edited = MutableLiveData(empty)
     private val _postCreated = SingleLiveEvent<Unit>()
@@ -52,12 +52,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     val postCreated: LiveData<Unit>
         get() = _postCreated
 
-//    val data: LiveData<FeedModel> = repository.data
-//        .map(::FeedModel)
-//        .catch { it.printStackTrace() }
-//        .asLiveData(Dispatchers.Default)
-
-    val data: LiveData<FeedModel> = AppAuth.getInstance()
+    val data: LiveData<FeedModel> = appAuth
         .authState
         .flatMapLatest { auth ->
             repository.data.map { posts ->
