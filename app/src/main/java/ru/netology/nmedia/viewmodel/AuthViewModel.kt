@@ -1,7 +1,5 @@
 package ru.netology.nmedia.viewmodel
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,19 +7,20 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.ktx.messaging
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import ru.netology.nmedia.api.PostsApiService
 import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.auth.AuthState
-import ru.netology.nmedia.db.AppDb
 import ru.netology.nmedia.dto.PushMessage
 import ru.netology.nmedia.dto.PushToken
 import ru.netology.nmedia.model.FeedModelState
 import ru.netology.nmedia.repository.PostRepository
-import ru.netology.nmedia.repository.PostRepositoryImpl
+import javax.inject.Inject
 
-class AuthViewModel(
+@HiltViewModel
+class AuthViewModel @Inject constructor(
     private val repository: PostRepository,
     private val appAuth: AppAuth,
     private val apiService: PostsApiService
@@ -38,8 +37,8 @@ class AuthViewModel(
 //        PostRepositoryImpl(AppDb.getInstance(application).postDao())
 
     val data = appAuth.authState
-    val authenticated: Boolean
-        get() = data.value.id != 0L
+//    val authenticated: Boolean
+//        get() = data.value.id != 0L
 
     val authState: LiveData<AuthState>
         //get() = AppAuth.getInstance().authState.asLiveData()

@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.catch
@@ -25,6 +26,7 @@ import ru.netology.nmedia.util.SingleLiveEvent
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import javax.inject.Inject
 
 private val empty = Post(
     id = 0,
@@ -37,8 +39,9 @@ private val empty = Post(
     published = 0,
 )
 
+@HiltViewModel
 @ExperimentalCoroutinesApi
-class PostViewModel(
+class PostViewModel @Inject constructor(
     private val repository: PostRepository,
     appAuth: AppAuth
 ) : ViewModel() {

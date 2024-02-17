@@ -22,6 +22,7 @@ import ru.netology.nmedia.dto.PushToken
 interface PostsApiService {
     @GET("posts")
     suspend fun getAll(): Response<List<Post>>
+
     @GET("posts/{id}/newer")
     suspend fun getNewer(@Path("id") id: Long): Response<List<Post>>
 
@@ -43,12 +44,18 @@ interface PostsApiService {
 
     @FormUrlEncoded
     @POST("users/authentication")
-    suspend fun updateUser(@Field("login") login: String, @Field("pass") pass: String): Response<AuthState>
+    suspend fun updateUser(
+        @Field("login") login: String,
+        @Field("pass") pass: String
+    ): Response<AuthState>
 
     @POST("users/push-tokens")
     suspend fun sendPushToken(@Body pushToken: PushToken): Response<Unit>
 
     @POST("${BuildConfig.BASE_URL}/api/pushes")
-    suspend fun sendTestPush(@Query ("token") token: String, @Body message: PushMessage): Response<Unit>
+    suspend fun sendTestPush(
+        @Query("token") token: String,
+        @Body message: PushMessage
+    ): Response<Unit>
 }
 

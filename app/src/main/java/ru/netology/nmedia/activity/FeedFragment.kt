@@ -6,15 +6,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import ru.netology.nmedia.R
 import ru.netology.nmedia.adapter.OnIteractionListener
 import ru.netology.nmedia.adapter.PostsAdapter
+import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.databinding.FragmentFeedBinding
-import ru.netology.nmedia.di.DependencyContainer
 import ru.netology.nmedia.dialogs.DialogAuth
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.util.PostEditArg
@@ -22,11 +23,14 @@ import ru.netology.nmedia.util.StringArg
 import ru.netology.nmedia.viewmodel.AuthViewModel.Companion.DIALOG_IN
 import ru.netology.nmedia.viewmodel.AuthViewModel.Companion.userAuth
 import ru.netology.nmedia.viewmodel.PostViewModel
-import ru.netology.nmedia.viewmodel.ViewModelFactory
+import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
+@AndroidEntryPoint
 class FeedFragment : Fragment() {
-    private val dependencyContainer = DependencyContainer.getInstance()
+
+    @Inject
+    lateinit var appAuth: AppAuth
 
     companion object {
         var Bundle.postEditArg: Long by PostEditArg
@@ -40,16 +44,7 @@ class FeedFragment : Fragment() {
     ): View {
 
         val binding = FragmentFeedBinding.inflate(inflater, container, false)
-        val viewModel: PostViewModel by viewModels(
-            ownerProducer = ::requireParentFragment,
-            factoryProducer = {
-                ViewModelFactory(
-                    dependencyContainer.repository,
-                    dependencyContainer.appAuth,
-                    dependencyContainer.apiService
-                )
-            }
-        )
+        val viewModel: PostViewModel by activityViewModels()
 
         viewModel.cancelEdit()
         val adapter = PostsAdapter(object : OnIteractionListener {
@@ -59,19 +54,6 @@ class FeedFragment : Fragment() {
                     DialogAuth.newInstance(DIALOG_IN).show(childFragmentManager, "TAG")
                 }
             }
-
-//            override fun onShare(post: Post) {
-//                val intent = Intent().apply {
-//                    action = Intent.ACTION_SEND
-//                    putExtra(Intent.EXTRA_TEXT, post.content)
-//                    type = "text/plain"
-//                }
-//
-//                val shareIntent =
-//                    Intent.createChooser(intent, getString(R.string.chooser_share_post))
-//                startActivity(shareIntent)
-//                viewModel.share(post.id)
-//            }
 
             override fun onEdit(post: Post) {
                 viewModel.edit(post)
@@ -150,7 +132,7 @@ class FeedFragment : Fragment() {
                     Snackbar.LENGTH_LONG
                 )
                     .setAction("ВХОД") {
-                        dependencyContainer.appAuth.removeAuth()
+                        appAuth.removeAuth()
                         userAuth = false
                         findNavController().navigate(
                             R.id.authFragment

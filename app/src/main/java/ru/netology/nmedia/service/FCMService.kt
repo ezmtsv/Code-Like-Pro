@@ -15,18 +15,22 @@ import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
+import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.AppActivity
-import ru.netology.nmedia.di.DependencyContainer
+import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.dto.PushMessage
+import javax.inject.Inject
 import kotlin.random.Random
 
-class FCMService() : FirebaseMessagingService() {
-    private val action = "action"
+@AndroidEntryPoint
+class FCMService : FirebaseMessagingService() {
     private val content = "content"
     private val channelId = "remote"
     private val gson = Gson()
-private val dependencyContainer = DependencyContainer.getInstance()
+
+    @Inject
+    lateinit var appAuth: AppAuth
 
     override fun onCreate() {
         super.onCreate()
@@ -43,37 +47,18 @@ private val dependencyContainer = DependencyContainer.getInstance()
     }
 
     override fun onMessageReceived(message: RemoteMessage) {
-//        message.data[action]?.let {
-//            when (it) {
-//                Action.LIKE.toString() -> handleLike(
-//                    gson.fromJson(
-//                        message.data[content],
-//                        Like::class.java
-//                    )
-//                )
-//
-//                Action.NEWPOST.toString() -> handleNewPost(
-//                    gson.fromJson(
-//                        message.data[content],
-//                        NewPost::class.java
-//                    )
-//                )
-//
-//                else -> println("Notification haven't handler!")
-//            }
-//        }
 
         val pushMessage = gson.fromJson(
             message.data[content],
             PushMessage::class.java
         )
         when (pushMessage.recipientId) {
-            dependencyContainer.appAuth.authState.value.id, null -> {
+            appAuth.authState.value.id, null -> {
                 showNotification(pushMessage)
             }
 
             else -> {
-                dependencyContainer.appAuth.sendPushToken(null)
+                appAuth.sendPushToken(null)
             }
 
         }
@@ -98,62 +83,10 @@ private val dependencyContainer = DependencyContainer.getInstance()
         notify(notification)
     }
 
-//    private fun handleNewPost(content: NewPost) {
-//
-//        val intent = Intent(this, AppActivity::class.java)
-//        intent.apply {
-//            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-//        }
-//        val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-//
-//        val notification = NotificationCompat.Builder(this, channelId)
-//            .setSmallIcon(R.drawable.ic_notification)
-//            .setContentTitle(
-//                getString(
-//                    R.string.notification_new_post,
-//                    content.userName,
-//                )
-//            )
-//            .setLargeIcon(BitmapFactory.decodeResource(resources, R.drawable.ic_large))
-//            .setStyle(
-//                NotificationCompat.BigTextStyle()
-//                    .bigText(content.textPost.subSequence(0, 105).toString().plus("..."))
-//            )
-//            .setContentIntent(pendingIntent)
-//            .setAutoCancel(true)                    // auto close
-//            .build()
-//        notify(notification)
-//    }
-
     override fun onNewToken(token: String) {
         //println("FCM token = $token")
-        dependencyContainer.appAuth.sendPushToken(token)
+        appAuth.sendPushToken(token)
     }
-
-//    private fun handleLike(content: Like) {
-//        val intent = Intent(this, AppActivity::class.java)
-//        println("FCM handleLike(content: Like)")
-//        intent.apply {
-//            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-//        }
-//        val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-//
-//
-//        val notification = NotificationCompat.Builder(this, channelId)
-//            .setSmallIcon(R.drawable.ic_notification)
-//            .setContentTitle(
-//                getString(
-//                    R.string.notification_user_liked,
-//                    content.userName,
-//                    content.postAuthor,
-//                )
-//            )
-//            .setLargeIcon(BitmapFactory.decodeResource(resources, R.drawable.ic_large))
-//            .setContentIntent(pendingIntent)
-//            .setAutoCancel(true)                    // auto close
-//            .build()
-//        notify(notification)
-//    }
 
     private fun notify(notification: Notification) {
         if (
@@ -168,24 +101,5 @@ private val dependencyContainer = DependencyContainer.getInstance()
     }
 }
 
-//enum class Action {
-//    LIKE,
-//    NEWPOST,
-//}
-//
-//data class Like(
-//    val userId: Long,
-//    val userName: String,
-//    val postId: Long,
-//    val postAuthor: String,
-//)
-//
-//data class NewPost(
-//    val userId: Long,
-//    val userName: String,
-//    val postId: Long,
-//    val textPost: String,
-//    val postAuthor: String,
-//)
 
 

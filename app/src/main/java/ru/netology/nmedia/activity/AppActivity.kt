@@ -19,31 +19,28 @@ import androidx.navigation.findNavController
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.firebase.messaging.FirebaseMessaging
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
 import ru.netology.nmedia.databinding.ActivityAppBinding
-import ru.netology.nmedia.di.DependencyContainer
 import ru.netology.nmedia.dialogs.DialogAuth
 import ru.netology.nmedia.viewmodel.AuthViewModel
 import ru.netology.nmedia.viewmodel.AuthViewModel.Companion.DIALOG_IN
 import ru.netology.nmedia.viewmodel.AuthViewModel.Companion.DIALOG_OUT
 import ru.netology.nmedia.viewmodel.AuthViewModel.Companion.DIALOG_REG
-import ru.netology.nmedia.viewmodel.ViewModelFactory
+import javax.inject.Inject
 
 
+@AndroidEntryPoint
 class AppActivity : AppCompatActivity(), DialogAuth.ReturnSelection {
+    @Inject
+    lateinit var googleApiAvailability: GoogleApiAvailability
 
-    private val dependencyContainer = DependencyContainer.getInstance()
-    val viewModel: AuthViewModel by viewModels(
-        factoryProducer = {
-            ViewModelFactory(
-                dependencyContainer.repository,
-                dependencyContainer.appAuth,
-                dependencyContainer.apiService
-            )
-        }
-    )
+    @Inject
+    lateinit var firebaseMessaging: FirebaseMessaging
+
+    val viewModel: AuthViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding = ActivityAppBinding.inflate(layoutInflater)
@@ -153,7 +150,8 @@ class AppActivity : AppCompatActivity(), DialogAuth.ReturnSelection {
     }
 
     private fun checkGoogleApiAvailability() {
-        with(GoogleApiAvailability.getInstance()) {
+
+        with(googleApiAvailability) {
             val code = isGooglePlayServicesAvailable(this@AppActivity)
             if (code == ConnectionResult.SUCCESS) {
                 return@with
@@ -166,7 +164,7 @@ class AppActivity : AppCompatActivity(), DialogAuth.ReturnSelection {
                 .show()
         }
 
-        FirebaseMessaging.getInstance().token.addOnSuccessListener {
+        firebaseMessaging.token.addOnSuccessListener {
             println(it)
         }
     }

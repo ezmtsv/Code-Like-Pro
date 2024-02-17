@@ -19,16 +19,16 @@ import android.view.*
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.net.toFile
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import ru.netology.nmedia.di.DependencyContainer
-import ru.netology.nmedia.viewmodel.ViewModelFactory
 
 @OptIn(ExperimentalCoroutinesApi::class)
+@AndroidEntryPoint
 class NewPostFragment : Fragment() {
-    private val dependencyContainer = DependencyContainer.getInstance()
+
     companion object {
         var Bundle.textArg: String? by StringArg
     }
@@ -38,16 +38,7 @@ class NewPostFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val viewModel: PostViewModel by viewModels(
-            ownerProducer =:: requireParentFragment,
-            factoryProducer = {
-                ViewModelFactory(
-                    dependencyContainer.repository,
-                    dependencyContainer.appAuth,
-                    dependencyContainer.apiService
-                )
-            }
-        )
+        val viewModel: PostViewModel by activityViewModels()
         val binding = FragmentNewPostBinding.inflate(layoutInflater, container, false)
         var phtoEmpty = true
 

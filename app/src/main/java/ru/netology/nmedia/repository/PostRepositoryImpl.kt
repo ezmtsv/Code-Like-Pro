@@ -30,12 +30,13 @@ import ru.netology.nmedia.error.AuthorisationError
 import ru.netology.nmedia.error.NetworkError
 import ru.netology.nmedia.error.UnknownError
 import java.io.IOException
+import javax.inject.Inject
 
 
-class PostRepositoryImpl(
+class PostRepositoryImpl @Inject constructor(
     private val dao: PostDao,
     private val apiService: PostsApiService
-    ) : PostRepository {
+) : PostRepository {
     private val postsFlow = MutableStateFlow(emptyList<PostEntity>())
     override val data = dao.getAllVisible()
         .map(List<PostEntity>::toDto)
