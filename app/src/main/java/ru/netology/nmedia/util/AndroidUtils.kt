@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewTreeObserver
 import android.view.inputmethod.InputMethodManager
+import com.google.gson.Gson
+import ru.netology.nmedia.dto.Post
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -85,13 +87,21 @@ object StringArg : ReadWriteProperty<Bundle, String?> {
         thisRef.getString(property.name)
 }
 
-object PostEditArg : ReadWriteProperty<Bundle, Long> {
+object LongArg : ReadWriteProperty<Bundle, Long> {
     override fun getValue(thisRef: Bundle, property: KProperty<*>): Long =
         thisRef.getLong(property.name)
 
     override fun setValue(thisRef: Bundle, property: KProperty<*>, value: Long) {
         thisRef.putLong(property.name, value)
     }
-
 }
 
+object PostArg : ReadWriteProperty<Bundle, Post> {
+    override fun getValue(thisRef: Bundle, property: KProperty<*>): Post =
+        Gson().fromJson(thisRef.getString(property.name), Post::class.java)
+
+     override fun setValue(thisRef: Bundle, property: KProperty<*>, value: Post) {
+        val post = Gson().toJson(value)
+        thisRef.putString(property.name, post)
+    }
+}

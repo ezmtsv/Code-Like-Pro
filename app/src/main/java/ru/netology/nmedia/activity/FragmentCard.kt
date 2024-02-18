@@ -11,7 +11,7 @@ import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import ru.netology.nmedia.R
-import ru.netology.nmedia.activity.FeedFragment.Companion.postEditArg
+import ru.netology.nmedia.activity.FeedFragment.Companion.postArg
 import ru.netology.nmedia.activity.FeedFragment.Companion.uriArg
 import ru.netology.nmedia.adapter.OnIteractionListener
 import ru.netology.nmedia.adapter.PostViewHolder
@@ -33,66 +33,61 @@ class FragmentCard : Fragment() {
     ): View {
 
         val binding = CardPostBinding.inflate(layoutInflater, container, false)
-        val idPost = arguments?.postEditArg
+        //val idPost = arguments?.longArg
+        val post = arguments?.postArg
 
-        viewModel.data.observe(viewLifecycleOwner) { posts ->
-            val post = posts.posts.find { it.id == idPost }
-            post?.let {
-                PostViewHolder(binding, object : OnIteractionListener {
-                    override fun onLike(post: Post) {
-                        if (AuthViewModel.userAuth) viewModel.like(post)
-                        else DialogAuth.newInstance(AuthViewModel.DIALOG_IN)
-                            .show(childFragmentManager, "TAG")
-                    }
+        post?.let {
+            PostViewHolder(binding, object : OnIteractionListener {
+                override fun onLike(post: Post) {
+                    if (AuthViewModel.userAuth) viewModel.like(post)
+                    else DialogAuth.newInstance(AuthViewModel.DIALOG_IN)
+                        .show(childFragmentManager, "TAG")
+                }
 
-//                    override fun onShare(post: Post) {
-//                        val intent = Intent().apply {
-//                            action = Intent.ACTION_SEND
-//                            putExtra(Intent.EXTRA_TEXT, post.content)
-//                            type = "text/plain"
-//                        }
-//
-//                        val shareIntent =
-//                            Intent.createChooser(intent, getString(R.string.chooser_share_post))
-//                        startActivity(shareIntent)
-//                        viewModel.share(post.id)
-//                    }
+                override fun onEdit(post: Post) {
+                    viewModel.edit(post)
+                    findNavController().navigate(
+                        R.id.action_fragmentCard_to_editPostFragment,
+                        Bundle().apply {
+                            //longArg = post.id
+                            postArg = post
+                        }
+                    )
+                }
 
-                    override fun onEdit(post: Post) {
-                        viewModel.edit(post)
-                        findNavController().navigate(
-                            R.id.action_fragmentCard_to_editPostFragment,
-                            Bundle().apply {
-                                postEditArg = post.id
-                            }
-                        )
-                    }
-
-                    override fun onRemove(post: Post) {
-                        viewModel.remove(post)
-                        findNavController().navigateUp()
-                    }
+                override fun onRemove(post: Post) {
+                    viewModel.remove(post)
+                    findNavController().navigateUp()
+                }
 
 //                    override fun openLinkVideo(post: Post) {
 //                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(post.linkVideo))
 //                        startActivity(intent)
 //                    }
 
-                    override fun openCardPost(post: Post) {
+                override fun openCardPost(post: Post) {
 
-                    }
+                }
 
-                    override fun openSpacePhoto(post: Post) {
-                        findNavController().navigate(
-                            R.id.action_fragmentCard_to_spacePhoto,
-                            Bundle().apply {
-                                uriArg = post.attachment?.url
-                            }
-                        )
-                    }
-                }).bind(post)
-            }
+                override fun openSpacePhoto(post: Post) {
+                    findNavController().navigate(
+                        R.id.action_fragmentCard_to_spacePhoto,
+                        Bundle().apply {
+                            uriArg = post.attachment?.url
+                        }
+                    )
+                }
+            }).bind(post)
         }
+
+
+//        viewLifecycleOwner.lifecycleScope.launch {
+//            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+//                viewModel.data.asLiveData().observe(viewLifecycleOwner) {
+//
+//                }
+//            }
+//        }
 
         viewModel.dataState.observe(viewLifecycleOwner) { state ->
             binding.progressCard.isVisible = state.loading
