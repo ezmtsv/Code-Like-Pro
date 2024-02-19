@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import ru.netology.nmedia.R
 import ru.netology.nmedia.adapter.OnIteractionListener
@@ -22,9 +23,15 @@ import ru.netology.nmedia.util.StringArg
 import ru.netology.nmedia.viewmodel.AuthViewModel.Companion.DIALOG_IN
 import ru.netology.nmedia.viewmodel.AuthViewModel.Companion.userAuth
 import ru.netology.nmedia.viewmodel.PostViewModel
+import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
+@AndroidEntryPoint
 class FeedFragment : Fragment() {
+
+    @Inject
+    lateinit var appAuth: AppAuth
+
     companion object {
         var Bundle.postEditArg: Long by PostEditArg
         var Bundle.uriArg: String? by StringArg
@@ -48,19 +55,6 @@ class FeedFragment : Fragment() {
                 }
             }
 
-//            override fun onShare(post: Post) {
-//                val intent = Intent().apply {
-//                    action = Intent.ACTION_SEND
-//                    putExtra(Intent.EXTRA_TEXT, post.content)
-//                    type = "text/plain"
-//                }
-//
-//                val shareIntent =
-//                    Intent.createChooser(intent, getString(R.string.chooser_share_post))
-//                startActivity(shareIntent)
-//                viewModel.share(post.id)
-//            }
-
             override fun onEdit(post: Post) {
                 viewModel.edit(post)
                 findNavController().navigate(
@@ -81,8 +75,15 @@ class FeedFragment : Fragment() {
 //            }
 
             override fun openCardPost(post: Post) {
+//                findNavController().navigate(
+//                    R.id.action_feedFragment_to_fragmentCard,
+//                    Bundle().apply {
+//                        postEditArg = post.id
+//                    }
+//                )
+
                 findNavController().navigate(
-                    R.id.action_feedFragment_to_fragmentCard,
+                    R.id.fragmentCard,
                     Bundle().apply {
                         postEditArg = post.id
                     }
@@ -131,7 +132,7 @@ class FeedFragment : Fragment() {
                     Snackbar.LENGTH_LONG
                 )
                     .setAction("ВХОД") {
-                        AppAuth.getInstance().removeAuth()
+                        appAuth.removeAuth()
                         userAuth = false
                         findNavController().navigate(
                             R.id.authFragment

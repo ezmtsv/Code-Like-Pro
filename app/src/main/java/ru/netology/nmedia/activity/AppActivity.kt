@@ -19,6 +19,7 @@ import androidx.navigation.findNavController
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.firebase.messaging.FirebaseMessaging
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
@@ -28,12 +29,18 @@ import ru.netology.nmedia.viewmodel.AuthViewModel
 import ru.netology.nmedia.viewmodel.AuthViewModel.Companion.DIALOG_IN
 import ru.netology.nmedia.viewmodel.AuthViewModel.Companion.DIALOG_OUT
 import ru.netology.nmedia.viewmodel.AuthViewModel.Companion.DIALOG_REG
+import javax.inject.Inject
 
 
+@AndroidEntryPoint
 class AppActivity : AppCompatActivity(), DialogAuth.ReturnSelection {
+    @Inject
+    lateinit var googleApiAvailability: GoogleApiAvailability
 
+    @Inject
+    lateinit var firebaseMessaging: FirebaseMessaging
 
-    val viewModel by viewModels<AuthViewModel>()
+    val viewModel: AuthViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding = ActivityAppBinding.inflate(layoutInflater)
@@ -73,8 +80,8 @@ class AppActivity : AppCompatActivity(), DialogAuth.ReturnSelection {
             }
 
             override fun onPrepareMenu(menu: Menu) {
-                menu.setGroupVisible(R.id.authenticated, viewModel.authenticated)
-                menu.setGroupVisible(R.id.unauthenticated, !viewModel.authenticated)
+                menu.setGroupVisible(R.id.authenticated, AuthViewModel.userAuth)
+                menu.setGroupVisible(R.id.unauthenticated, !AuthViewModel.userAuth)
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
@@ -143,7 +150,8 @@ class AppActivity : AppCompatActivity(), DialogAuth.ReturnSelection {
     }
 
     private fun checkGoogleApiAvailability() {
-        with(GoogleApiAvailability.getInstance()) {
+
+        with(googleApiAvailability) {
             val code = isGooglePlayServicesAvailable(this@AppActivity)
             if (code == ConnectionResult.SUCCESS) {
                 return@with
@@ -156,7 +164,7 @@ class AppActivity : AppCompatActivity(), DialogAuth.ReturnSelection {
                 .show()
         }
 
-        FirebaseMessaging.getInstance().token.addOnSuccessListener {
+        firebaseMessaging.token.addOnSuccessListener {
             println(it)
         }
     }

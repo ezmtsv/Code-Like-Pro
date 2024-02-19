@@ -10,14 +10,17 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.FragmentAuthBinding
 import ru.netology.nmedia.viewmodel.AuthViewModel
 
+@AndroidEntryPoint
 class AuthFragment : Fragment() {
-    private val viewModel by activityViewModels<AuthViewModel>()
+
+    private val viewModel: AuthViewModel by activityViewModels()
     private var pressBtn = false
 
     override fun onCreateView(
