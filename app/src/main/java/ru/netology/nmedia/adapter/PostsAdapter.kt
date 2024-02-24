@@ -56,7 +56,8 @@ class PostViewHolder(
 
             val sdf = java.text.SimpleDateFormat("dd MMMM yyyy, HH:mm")
             val date = java.util.Date(post.published * 1000)
-            published.text = sdf.format(date).toString()
+//            published.text = sdf.format(date).toString()
+            published.text = post.id.toString()
 
             content.text = post.content
             icLike.isChecked = post.likedByMe

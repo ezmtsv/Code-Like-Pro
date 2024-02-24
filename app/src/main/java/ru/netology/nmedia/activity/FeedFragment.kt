@@ -106,6 +106,13 @@ class FeedFragment : Fragment() {
         })
         binding.list.adapter = adapter
 
+        fun reload() {
+            Snackbar.make(binding.root, R.string.error_loading, Snackbar.LENGTH_LONG)
+//                .setAction(R.string.retry_loading) { viewModel.loadPosts() }
+                .setAction(R.string.retry_loading) { adapter.refresh() }
+                .show()
+        }
+
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.data.collectLatest(adapter::submitData)
@@ -119,14 +126,16 @@ class FeedFragment : Fragment() {
                         state.refresh is LoadState.Loading ||
                                 state.prepend is LoadState.Loading ||
                                 state.append is LoadState.Loading
+                    if (state.refresh is LoadState.Error) reload()
                 }
             }
         }
 
         viewModel.dataInvisible.observe(viewLifecycleOwner) {
-            if (it.posts.isNotEmpty()) {
-                binding.newPostsGroup.visibility = View.VISIBLE
-            }
+//            if (it.posts.isNotEmpty()) {
+//                println("invisible posts ${it.posts.size}")
+//                binding.newPostsGroup.visibility = View.VISIBLE
+//            }
         }
 
         viewModel.dataState.observe(viewLifecycleOwner) { state ->
@@ -134,9 +143,7 @@ class FeedFragment : Fragment() {
             binding.swipeRefreshLayout.isRefreshing = state.refreshing
             adapter.refresh()
             if (state.error) {
-                Snackbar.make(binding.root, R.string.error_loading, Snackbar.LENGTH_LONG)
-                    .setAction(R.string.retry_loading) { viewModel.loadPosts() }
-                    .show()
+                reload()
             }
 
             if (state.error403) {
