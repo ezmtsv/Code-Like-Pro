@@ -11,7 +11,7 @@ import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import ru.netology.nmedia.R
-import ru.netology.nmedia.activity.FeedFragment.Companion.postEditArg
+import ru.netology.nmedia.activity.FeedFragment.Companion.postArg
 import ru.netology.nmedia.databinding.FragmentEditPostBinding
 import ru.netology.nmedia.util.AndroidUtils.focusAndShowKeyboard
 import ru.netology.nmedia.viewmodel.PostViewModel
@@ -28,8 +28,10 @@ class EditPostFragment : Fragment() {
     ): View {
         val binding = FragmentEditPostBinding.inflate(layoutInflater)
 
-        val idPost = arguments?.postEditArg
-        val textPost = viewModel.data.value?.posts?.find { it.id == idPost }?.content
+        //val idPost = arguments?.longArg
+        //val textPost = "tmp"//viewModel.data.value?.posts?.find { it.id == idPost }?.content
+        val post = arguments?.postArg
+        val textPost = post?.content ?: ""
 
         fun endEdit() {
             val content = binding.edit.text.toString()

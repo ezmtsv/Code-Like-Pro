@@ -7,10 +7,16 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import ru.netology.nmedia.R
 import ru.netology.nmedia.adapter.OnIteractionListener
 import ru.netology.nmedia.adapter.PostsAdapter
@@ -18,7 +24,7 @@ import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.databinding.FragmentFeedBinding
 import ru.netology.nmedia.dialogs.DialogAuth
 import ru.netology.nmedia.dto.Post
-import ru.netology.nmedia.util.PostEditArg
+import ru.netology.nmedia.util.PostArg
 import ru.netology.nmedia.util.StringArg
 import ru.netology.nmedia.viewmodel.AuthViewModel.Companion.DIALOG_IN
 import ru.netology.nmedia.viewmodel.AuthViewModel.Companion.userAuth
@@ -33,8 +39,9 @@ class FeedFragment : Fragment() {
     lateinit var appAuth: AppAuth
 
     companion object {
-        var Bundle.postEditArg: Long by PostEditArg
+        //var Bundle.longArg: Long by LongArg
         var Bundle.uriArg: String? by StringArg
+        var Bundle.postArg: Post by PostArg
     }
 
     override fun onCreateView(
@@ -60,7 +67,8 @@ class FeedFragment : Fragment() {
                 findNavController().navigate(
                     R.id.action_feedFragment_to_editPostFragment,
                     Bundle().apply {
-                        postEditArg = post.id
+                        //longArg = post.id
+                        postArg = post
                     }
                 )
             }
@@ -75,17 +83,13 @@ class FeedFragment : Fragment() {
 //            }
 
             override fun openCardPost(post: Post) {
-//                findNavController().navigate(
-//                    R.id.action_feedFragment_to_fragmentCard,
-//                    Bundle().apply {
-//                        postEditArg = post.id
-//                    }
-//                )
-
                 findNavController().navigate(
                     R.id.fragmentCard,
+//                    Bundle().apply {
+//                        longArg = post.id
+//                    }
                     Bundle().apply {
-                        postEditArg = post.id
+                        postArg = post
                     }
                 )
             }
@@ -102,27 +106,44 @@ class FeedFragment : Fragment() {
         })
         binding.list.adapter = adapter
 
-        viewModel.data.observe(viewLifecycleOwner) { state ->
-            val newPost = adapter.currentList.size < state.posts.size
-            adapter.submitList(state.posts) {
-                if (newPost) binding.list.smoothScrollToPosition(0)
+        fun reload() {
+            Snackbar.make(binding.root, R.string.error_loading, Snackbar.LENGTH_LONG)
+//                .setAction(R.string.retry_loading) { viewModel.loadPosts() }
+                .setAction(R.string.retry_loading) { adapter.refresh() }
+                .show()
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.data.collectLatest(adapter::submitData)
             }
-            binding.emptyText.isVisible = state.empty
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                adapter.loadStateFlow.collectLatest { state ->
+                    binding.swipeRefreshLayout.isRefreshing =
+                        state.refresh is LoadState.Loading ||
+                                state.prepend is LoadState.Loading ||
+                                state.append is LoadState.Loading
+                    if (state.refresh is LoadState.Error) reload()
+                }
+            }
         }
 
         viewModel.dataInvisible.observe(viewLifecycleOwner) {
-            if (it.posts.isNotEmpty()) {
-                binding.newPostsGroup.visibility = View.VISIBLE
-            }
+//            if (it.posts.isNotEmpty()) {
+//                println("invisible posts ${it.posts.size}")
+//                binding.newPostsGroup.visibility = View.VISIBLE
+//            }
         }
 
         viewModel.dataState.observe(viewLifecycleOwner) { state ->
             binding.progress.isVisible = state.loading
             binding.swipeRefreshLayout.isRefreshing = state.refreshing
+            adapter.refresh()
             if (state.error) {
-                Snackbar.make(binding.root, R.string.error_loading, Snackbar.LENGTH_LONG)
-                    .setAction(R.string.retry_loading) { viewModel.loadPosts() }
-                    .show()
+                reload()
             }
 
             if (state.error403) {
@@ -143,19 +164,14 @@ class FeedFragment : Fragment() {
 
         }
 
-        viewModel.newerCount.observe(viewLifecycleOwner) {
-            if (it != 0) {
-                binding.newPostsGroup.visibility = View.VISIBLE
-            }
-        }
-
         binding.fab.setOnClickListener {
             if (userAuth) findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
             else DialogAuth.newInstance(DIALOG_IN).show(childFragmentManager, "TAG")
         }
 
         binding.swipeRefreshLayout.setOnRefreshListener {
-            viewModel.refreshPosts()
+            //viewModel.refreshPosts()
+            adapter.refresh()
         }
         binding.swipeRefreshLayout.setColorSchemeResources(
             android.R.color.holo_blue_bright,
