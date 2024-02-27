@@ -131,12 +131,12 @@ class FeedFragment : Fragment() {
             }
         }
 
-        viewModel.dataInvisible.observe(viewLifecycleOwner) {
-//            if (it.posts.isNotEmpty()) {
-//                println("invisible posts ${it.posts.size}")
-//                binding.newPostsGroup.visibility = View.VISIBLE
-//            }
-        }
+//        viewModel.dataInvisible.observe(viewLifecycleOwner) {
+////            if (it.posts.isNotEmpty()) {
+////                println("invisible posts ${it.posts.size}")
+////                binding.newPostsGroup.visibility = View.VISIBLE
+////            }
+//        }
 
         viewModel.dataState.observe(viewLifecycleOwner) { state ->
             binding.progress.isVisible = state.loading
@@ -178,10 +178,10 @@ class FeedFragment : Fragment() {
             android.R.color.holo_green_light,
             android.R.color.holo_red_light,
         )
-        binding.btnAddNewPosts.setOnClickListener {
-            viewModel.showPosts()
-            binding.newPostsGroup.visibility = View.GONE
-        }
+//        binding.btnAddNewPosts.setOnClickListener {
+//            viewModel.showPosts()
+//            binding.newPostsGroup.visibility = View.GONE
+//        }
         return binding.root
     }
 

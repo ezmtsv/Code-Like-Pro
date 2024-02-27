@@ -13,14 +13,14 @@ interface PostDao {
     @Query("SELECT * FROM PostEntity ORDER BY id DESC")
     fun getPagingSource(): PagingSource<Int, PostEntity>
 
-    @Query("SELECT * FROM PostEntity WHERE visibility = 1 ORDER BY id DESC")
-    fun getAllVisible(): Flow<List<PostEntity>>
+//    @Query("SELECT * FROM PostEntity WHERE visibility = 1 ORDER BY id DESC")
+//    fun getAllVisible(): Flow<List<PostEntity>>
 
-    @Query("SELECT * FROM PostEntity WHERE visibility = 0 ORDER BY id DESC")
-    fun getAllInvisible(): Flow<List<PostEntity>>
+//    @Query("SELECT * FROM PostEntity WHERE visibility = 0 ORDER BY id DESC")
+//    fun getAllInvisible(): Flow<List<PostEntity>>
 
-    @Query("SELECT * FROM PostEntity ORDER BY id DESC")
-    fun getAllPosts(): Flow<List<PostEntity>>
+//    @Query("SELECT * FROM PostEntity ORDER BY id DESC")
+//    fun getAllPosts(): Flow<List<PostEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(post: PostEntity)
