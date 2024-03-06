@@ -26,5 +26,4 @@ interface PostRemoteKeyDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(keys: List<PostRemoteKeyEntity>)
-
 }

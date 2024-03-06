@@ -10,14 +10,15 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.GlideBuilder
 import ru.netology.nmedia.BuildConfig
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.CardAdBinding
 import ru.netology.nmedia.databinding.CardPostBinding
+import ru.netology.nmedia.databinding.CardTimeSeparatorBinding
 import ru.netology.nmedia.dto.Ad
 import ru.netology.nmedia.dto.FeedItem
 import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.dto.TextSeparator
 import ru.netology.nmedia.util.AndroidUtils
 import ru.netology.nmedia.viewmodel.AuthViewModel.Companion.userAuth
 
@@ -37,31 +38,46 @@ class PostsAdapter(
     private val onIteractionListener: OnIteractionListener
 ) : PagingDataAdapter<FeedItem, RecyclerView.ViewHolder>(PostDiffCallback()) {
     override fun getItemViewType(position: Int): Int =
-        when(getItem(position)){
+        when (getItem(position)) {
             is Ad -> R.layout.card_ad
             is Post -> R.layout.card_post
+            is TextSeparator -> R.layout.card_time_separator
             null -> error("unknown item type ")
         }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
-        when(viewType){
+        when (viewType) {
             R.layout.card_post -> {
-                val binding = CardPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                val binding =
+                    CardPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
                 PostViewHolder(binding, onIteractionListener)
             }
+
             R.layout.card_ad -> {
-                val binding = CardAdBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                val binding =
+                    CardAdBinding.inflate(LayoutInflater.from(parent.context), parent, false)
                 AdViewHolder(binding)
             }
+
+            R.layout.card_time_separator -> {
+                val binding =
+                    CardTimeSeparatorBinding.inflate(
+                        LayoutInflater.from(parent.context),
+                        parent,
+                        false
+                    )
+                AdTextViewHolder(binding)
+            }
+
             else -> error("unknown view type")
         }
 
 
-
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        when(val item = getItem(position)) {
+        when (val item = getItem(position)) {
             is Ad -> (holder as? AdViewHolder)?.bind(item)
             is Post -> (holder as? PostViewHolder)?.bind(item)
+            is TextSeparator -> (holder as AdTextViewHolder).bind(item)
             null -> error("unknown type")
         }
 
@@ -74,7 +90,20 @@ class AdViewHolder(
 ) : RecyclerView.ViewHolder(binding.root) {
     @SuppressLint("CheckResult")
     fun bind(ad: Ad) {
+        if (ad.text == "") binding.textSeparator.visibility = View.GONE
+        else binding.textSeparator.text = ad.text
         Glide.with(binding.image).load("${BuildConfig.BASE_URL}/media/${ad.image}")
+            .into(binding.image)
+
+    }
+}
+
+class AdTextViewHolder(
+    private val binding: CardTimeSeparatorBinding,
+) : RecyclerView.ViewHolder(binding.root) {
+    @SuppressLint("CheckResult")
+    fun bind(text: TextSeparator) {
+        binding.textSeparator.text = text.txt
     }
 }
 
@@ -91,17 +120,12 @@ class PostViewHolder(
             val sdf = java.text.SimpleDateFormat("dd MMMM yyyy, HH:mm")
             val date = java.util.Date(post.published * 1000)
             published.text = sdf.format(date).toString()
-//            published.text = post.id.toString()
 
             content.text = post.content
             icLike.isChecked = post.likedByMe
             icLike.text = AndroidUtils.getCountClick(post.likes)
-//            icShare.text = AndroidUtils.getCountClick(post.countRepost)
             icShare.text = AndroidUtils.getCountClick(1200)
             icView.text = AndroidUtils.getCountClick(450)
-
-//            if (post.linkVideo != "") groupVideo.visibility = View.VISIBLE
-//            else groupVideo.visibility = View.GONE
             groupVideo.visibility = View.GONE
             icLike.setOnClickListener {
                 if (!userAuth) icLike.isChecked = post.likedByMe

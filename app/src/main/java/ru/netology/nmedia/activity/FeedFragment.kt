@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -12,6 +11,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -19,6 +20,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.R
 import ru.netology.nmedia.adapter.OnIteractionListener
+import ru.netology.nmedia.adapter.PostLoadingStateAdapter
 import ru.netology.nmedia.adapter.PostsAdapter
 import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.databinding.FragmentFeedBinding
@@ -104,7 +106,30 @@ class FeedFragment : Fragment() {
             }
 
         })
-        binding.list.adapter = adapter
+
+        binding.list.adapter = adapter.withLoadStateHeaderAndFooter(
+            header = PostLoadingStateAdapter { adapter.retry() },
+            footer = PostLoadingStateAdapter { adapter.retry() }
+        )
+
+        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
+            0, ItemTouchHelper.START or ItemTouchHelper.END
+        ) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                TODO("Not yet implemented")
+            }
+
+            override fun onSwiped(
+                viewHolder: RecyclerView.ViewHolder,
+                direction: Int
+            ) {
+                println("DO SOMETHING")
+            }
+        }).attachToRecyclerView(binding.list)
 
         fun reload() {
             Snackbar.make(binding.root, R.string.error_loading, Snackbar.LENGTH_LONG)
@@ -131,20 +156,14 @@ class FeedFragment : Fragment() {
             }
         }
 
-//        viewModel.dataInvisible.observe(viewLifecycleOwner) {
-////            if (it.posts.isNotEmpty()) {
-////                println("invisible posts ${it.posts.size}")
-////                binding.newPostsGroup.visibility = View.VISIBLE
-////            }
-//        }
 
         viewModel.dataState.observe(viewLifecycleOwner) { state ->
-            binding.progress.isVisible = state.loading
-            binding.swipeRefreshLayout.isRefreshing = state.refreshing
-            adapter.refresh()
-            if (state.error) {
-                reload()
-            }
+//            binding.progress.isVisible = state.loading
+//            binding.swipeRefreshLayout.isRefreshing = state.refreshing
+//            adapter.refresh()
+//            if (state.error) {
+//                reload()
+//            }
 
             if (state.error403) {
                 Snackbar.make(
@@ -170,7 +189,6 @@ class FeedFragment : Fragment() {
         }
 
         binding.swipeRefreshLayout.setOnRefreshListener {
-            //viewModel.refreshPosts()
             adapter.refresh()
         }
         binding.swipeRefreshLayout.setColorSchemeResources(

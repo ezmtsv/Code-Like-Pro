@@ -1,5 +1,6 @@
 package ru.netology.nmedia.util
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.view.View
@@ -7,6 +8,9 @@ import android.view.ViewTreeObserver
 import android.view.inputmethod.InputMethodManager
 import com.google.gson.Gson
 import ru.netology.nmedia.dto.Post
+import java.text.SimpleDateFormat
+import java.time.OffsetDateTime
+import java.util.Calendar
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -75,6 +79,10 @@ object AndroidUtils {
         }
         return result
     }
+
+    @SuppressLint("SimpleDateFormat")
+    fun getTime(): String =
+        SimpleDateFormat("dd MMMM yyyy, HH:mm").format(Calendar.getInstance().time)
 }
 
 object StringArg : ReadWriteProperty<Bundle, String?> {
@@ -100,7 +108,7 @@ object PostArg : ReadWriteProperty<Bundle, Post> {
     override fun getValue(thisRef: Bundle, property: KProperty<*>): Post =
         Gson().fromJson(thisRef.getString(property.name), Post::class.java)
 
-     override fun setValue(thisRef: Bundle, property: KProperty<*>, value: Post) {
+    override fun setValue(thisRef: Bundle, property: KProperty<*>, value: Post) {
         val post = Gson().toJson(value)
         thisRef.putString(property.name, post)
     }
