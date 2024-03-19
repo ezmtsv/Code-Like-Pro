@@ -148,9 +148,9 @@ class FeedFragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 adapter.loadStateFlow.collectLatest { state ->
                     binding.swipeRefreshLayout.isRefreshing =
-                        state.refresh is LoadState.Loading ||
-                                state.prepend is LoadState.Loading ||
-                                state.append is LoadState.Loading
+                        state.refresh is LoadState.Loading //||
+                                //state.prepend is LoadState.Loading ||
+                                //state.append is LoadState.Loading
                     if (state.refresh is LoadState.Error) reload()
                 }
             }

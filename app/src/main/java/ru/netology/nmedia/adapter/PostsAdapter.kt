@@ -93,6 +93,7 @@ class AdViewHolder(
         if (ad.text == "") binding.textSeparator.visibility = View.GONE
         else binding.textSeparator.text = ad.text
         Glide.with(binding.image).load("${BuildConfig.BASE_URL}/media/${ad.image}")
+            .timeout(10000)
             .into(binding.image)
 
     }
