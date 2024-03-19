@@ -1,37 +1,38 @@
 package ru.netology.nmedia.viewmodel
 
-import android.annotation.SuppressLint
 import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
-import androidx.paging.cachedIn
 import androidx.paging.map
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
+import androidx.paging.cachedIn
+import androidx.paging.insertSeparators
+//import androidx.lifecycle.asLiveData
+//import kotlinx.coroutines.flow.catch
+//import kotlinx.coroutines.flow.stateIn
+//import ru.netology.nmedia.model.FeedModel
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.auth.AppAuth
+import ru.netology.nmedia.dto.Ad
+import ru.netology.nmedia.dto.FeedItem
 import ru.netology.nmedia.dto.MediaUpload
 import ru.netology.nmedia.dto.PhotoModel
 import ru.netology.nmedia.dto.Post
-import ru.netology.nmedia.model.FeedModel
 import ru.netology.nmedia.model.FeedModelState
 import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.util.SingleLiveEvent
 import java.io.File
-import java.text.SimpleDateFormat
-import java.util.Calendar
 import javax.inject.Inject
+import kotlin.random.Random
 
 private val empty = Post(
     id = 0,
@@ -62,25 +63,17 @@ class PostViewModel @Inject constructor(
 
     private val cached = repository.data.cachedIn(viewModelScope)
 
-    val data: Flow<PagingData<Post>> = appAuth
+    val data: Flow<PagingData<FeedItem>> = appAuth
         .authState
         .flatMapLatest { (myId, _) ->
-            repository.data.map { posts ->
-                posts.map { it.copy(ownedByMe = it.authorId == myId) }
+            cached.map { pagingData ->
+                pagingData.map { item ->
+                    if (item !is Post) item else item.copy(ownedByMe = item.authorId == myId)
+                }
             }
         }
         .flowOn(Dispatchers.Default)
 
-    val dataInvisible: LiveData<FeedModel> = repository.dataInvisible
-        .map(::FeedModel)
-        .catch { it.printStackTrace() }
-        .asLiveData(Dispatchers.Default)
-
-//    val newerCount: LiveData<Int> = data.switchMap {
-//        repository.getNewer(it.posts.firstOrNull()?.id ?: 0L)
-//            .catch { e -> e.printStackTrace() }
-//            .asLiveData(Dispatchers.Default)
-//    }
 
     private val _dataState = MutableLiveData<FeedModelState>()
     val dataState: LiveData<FeedModelState>
@@ -95,11 +88,11 @@ class PostViewModel @Inject constructor(
         //getPosts()
     }
 
-    private fun getPosts() {
-        viewModelScope.launch {
-            repository.getPosts()
-        }
-    }
+//    private fun getPosts() {
+//        viewModelScope.launch {
+//            repository.getPosts()
+//        }
+//    }
 
     fun loadPosts() {
         _dataState.value = FeedModelState(loading = true)
@@ -182,31 +175,6 @@ class PostViewModel @Inject constructor(
         edited.value = empty
     }
 
-    fun refreshPosts() {
-        _dataState.value = FeedModelState(refreshing = true)
-        viewModelScope.launch {
-            try {
-                //repository.getAllAsync()
-                _dataState.value = FeedModelState()
-            } catch (e: Exception) {
-                if (e.javaClass.name == "ru.netology.nmedia.error.AuthorisationError") {
-                    _dataState.value = FeedModelState(error403 = true)
-                } else _dataState.value = FeedModelState(error = true)
-            }
-        }
-    }
-
-    fun showPosts() {
-        viewModelScope.launch {
-            val posts = dataInvisible.value?.posts?.map {
-                it.copy(visibility = true)
-            }
-            posts?.let {
-                repository.savePosts(posts)
-            }
-        }
-    }
-
     fun clearPhoto() {
         _photo.value = noPhoto
     }
@@ -215,7 +183,4 @@ class PostViewModel @Inject constructor(
         _photo.value = PhotoModel(uri, file)
     }
 
-    @SuppressLint("SimpleDateFormat")
-    private fun getTime(): String =
-        SimpleDateFormat("dd MMMM yyyy, HH:mm").format(Calendar.getInstance().time).toString()
 }

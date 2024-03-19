@@ -4,16 +4,17 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import androidx.paging.insertSeparators
 import androidx.paging.map
-import kotlinx.coroutines.Dispatchers
+//import kotlinx.coroutines.Dispatchers
+//import kotlinx.coroutines.flow.flowOn
+//import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.update
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 
@@ -22,10 +23,13 @@ import ru.netology.nmedia.auth.AuthState
 import ru.netology.nmedia.dao.PostDao
 import ru.netology.nmedia.dao.PostRemoteKeyDao
 import ru.netology.nmedia.db.AppDb
+import ru.netology.nmedia.dto.Ad
 import ru.netology.nmedia.dto.Attachment
+import ru.netology.nmedia.dto.FeedItem
 import ru.netology.nmedia.dto.Media
 import ru.netology.nmedia.dto.MediaUpload
 import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.dto.TextSeparator
 import ru.netology.nmedia.entity.PostEntity
 import ru.netology.nmedia.entity.toDto
 import ru.netology.nmedia.entity.toEntity
@@ -37,6 +41,9 @@ import ru.netology.nmedia.error.AuthorisationError
 import ru.netology.nmedia.error.NetworkError
 import ru.netology.nmedia.error.UnknownError
 import java.io.IOException
+import java.time.Duration
+import java.time.OffsetDateTime
+import java.util.Random
 import javax.inject.Inject
 
 
@@ -49,11 +56,9 @@ class PostRepositoryImpl @Inject constructor(
     private val postsFlow = MutableStateFlow(emptyList<PostEntity>())
 
     @OptIn(ExperimentalPagingApi::class)
-    override val data: Flow<PagingData<Post>> = Pager(
+    override val data: Flow<PagingData<FeedItem>> = Pager(
         config = PagingConfig(
             pageSize = 5,
-            enablePlaceholders = false,
-            initialLoadSize = 10,
         ),
         pagingSourceFactory = { dao.getPagingSource() },
         remoteMediator = PostRemoteMediator(
@@ -65,11 +70,40 @@ class PostRepositoryImpl @Inject constructor(
             )
     ).flow
         .map {
+            var lastText = ""
             it.map(PostEntity::toDto)
+                .insertSeparators { previos: Post?, next: Post? ->
+                    val currentTime = OffsetDateTime.now()
+                    val yesterday = currentTime.minus(Duration.ofDays(1))
+                    val twoDay = currentTime.minus(Duration.ofDays(2))
+                    val text = when {
+                        next?.published!! < twoDay.toEpochSecond() -> "На прошлой неделе"
+                        next.published < yesterday.toEpochSecond() -> "Вчера"
+                        else -> "Сегодня"
+                    }
+                    if (previos?.id?.rem(5) == 0L) {
+                        if (lastText == text) {
+                            Ad(Random().nextLong(), 0, "https://netology.ru", "figma.jpg", "")
+                        } else {
+                            lastText = text
+                            Ad(Random().nextLong(), 0, "https://netology.ru", "figma.jpg", text)
+                        }
+
+                    } else {
+                        if (lastText == text) {
+                            null
+                        } else {
+                            lastText = text
+                            TextSeparator(0, next.published, text)
+                        }
+
+                    }
+                }
+
         }
 
-    override val dataInvisible = dao.getAllInvisible()
-        .map(List<PostEntity>::toDto)
+//    override val dataInvisible = dao.getAllInvisible()
+//        .map(List<PostEntity>::toDto)
 
     override suspend fun getAllAsync() {
         try {
@@ -237,11 +271,11 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getPosts() {
-        dao.getAllPosts().flowOn(Dispatchers.IO).collect { posts ->
-            postsFlow.update { posts }
-        }
-    }
+//    override suspend fun getPosts() {
+//        dao.getAllPosts().flowOn(Dispatchers.IO).collect { posts ->
+//            postsFlow.update { posts }
+//        }
+//    }
 
     override suspend fun userAuth(login: String, pass: String): AuthState {
         try {
